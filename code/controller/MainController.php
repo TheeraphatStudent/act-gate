@@ -72,10 +72,6 @@ class MainController
         if (isset($_GET['id'])) {
             $eventId = $_GET['id'];
             $eventObj = $eventModel->getEventById($eventId);
-
-            $value = json_decode($eventObj['location'], true);
-            $lat = floatval($value['lat']);
-            $lon = floatval($value['lon']);
         }
 
         if (in_array($event, EventUtils::ACCEPT_EVENT)) {
@@ -146,7 +142,7 @@ class MainController
 
         switch ($onModel) {
             case 'user':
-                $res = $request->authHandler($formContent, $data);
+                $res = $request->userHandler($formContent, $data);
                 break;
 
             case 'event':
