@@ -59,7 +59,7 @@ services:
     depends_on:
       - database
     ports:
-      - "8080:80"
+      - "8081:80"
     networks:
       - mynetwork
 networks:
