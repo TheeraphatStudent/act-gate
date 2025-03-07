@@ -1,0 +1,61 @@
+services:
+  - type: web
+    name: web-page
+    env: docker
+    dockerfilePath: DockerFile
+    buildCommand: ""
+    startCommand: ""
+    envVars:
+      - key: DATABASE_HOST
+        value: database
+      - key: DATABASE_USER
+        fromDatabase: MYSQL_USER
+      - key: DATABASE_PASSWORD
+        fromDatabase: MYSQL_PASSWORD
+      - key: DATABASE_NAME
+        fromDatabase: MYSQL_DATABASE
+    envFile: ./.env
+    ports:
+      - "3000:80"
+    volumes:
+      - path: .:/var/www/html/
+      - path: ./public/images/uploads:/var/www/html/public/images/uploads/
+    dependsOn:
+      - database
+
+  - type: database
+    name: database
+    image: mysql:latest
+    envVars:
+      - key: MYSQL_ROOT_PASSWORD
+        fromDatabase: MYSQL_ROOT_PASSWORD
+      - key: MYSQL_DATABASE
+        fromDatabase: MYSQL_DATABASE
+      - key: MYSQL_USER
+        fromDatabase: MYSQL_USER
+      - key: MYSQL_PASSWORD
+        fromDatabase: MYSQL_PASSWORD
+    ports:
+      - ${MYSQL_PORT}:3306
+    volumes:
+      - path: sqldb:/var/lib/mysql
+      - path: ./sql:/docker-entrypoint-initdb.d
+
+  - type: web
+    name: final_project-phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    envVars:
+      - key: MYSQL_ROOT_PASSWORD
+        fromDatabase: MYSQL_ROOT_PASSWORD
+      - key: PMA_HOST
+        value: database
+      - key: PMA_PORT
+        value: 3306
+      - key: PMA_USER
+        fromDatabase: MYSQL_USER
+      - key: PMA_PASSWORD
+        fromDatabase: MYSQL_PASSWORD
+    ports:
+      - "8080:80"
+    dependsOn:
+      - database
