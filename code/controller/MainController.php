@@ -47,10 +47,32 @@ class MainController
 
         switch ($type) {
             case 'login':
+                echo "<script>
+                        function togglePasswordVisibility() {
+                            const password = document.getElementById('password');
+                            if (password.type === 'password') {
+                                password.type = 'text';
+                            } else {
+                                password.type = 'password';
+                            }
+                        }
+                    </script>";
+
                 require_once("./view/auth/LoginView.php");
                 break;
 
             case 'register':
+                echo "<script>
+                        function togglePasswordVisibility() {
+                            const password = document.getElementById('password');
+                            if (password.type === 'password') {
+                                password.type = 'text';
+                            } else {
+                                password.type = 'password';
+                            }
+                        }
+                    </script>";
+
                 require_once("./view/auth/RegisterView.php");
                 break;
 
@@ -105,6 +127,11 @@ class MainController
 
                     require_once("./view/event/ManageView.php");
                     break;
+
+                // case 'mail':
+                //         $allaboutmail = $eventModel->getmailbyid($_SESSION['user']['userId']);
+                //         require_once("./view/mail/view.php");
+                //         break;
 
                 case 'create-test':
                     require_once("./view/event/test.CreateView.php");
@@ -165,7 +192,6 @@ class MainController
                 "onSearch" => true,
                 "value" => $res['data']['data']
             ];
-
         }
 
         return $res;
@@ -186,6 +212,10 @@ class MainController
     }
     public function mail()
     {
+        $event = new Event ($this->connection);
+        $aboutmail = ($event->getmailbyid($_SESSION['user']['userId']));
+        $emailTest = ["1", "2", "3"];
+
         require_once("./view/mail/view.php");
     }
 
