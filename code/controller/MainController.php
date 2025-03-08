@@ -95,11 +95,13 @@ class MainController
                     break;
 
                 case 'create':
+
                     require_once("./view/event/CreateView.php");
                     break;
                 case 'manage':
                     // ต้องแก้เป็น by id
                     $allEvents = $eventModel->getAllEventsById($_SESSION['user']['userId']);
+                    // print_r($_SESSION['user']['userId']);
 
                     require_once("./view/event/ManageView.php");
                     break;
@@ -158,11 +160,12 @@ class MainController
                 break;
         }
 
-        if (isset($res['type']) && ($res['type'] == 'search')) {
+        if (isset($res['type']) && (strpos($res['type'], 'search') !== false)) {
             $_SESSION['search'] = [
                 "onSearch" => true,
                 "value" => $res['data']['data']
             ];
+
         }
 
         return $res;

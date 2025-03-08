@@ -59,12 +59,12 @@ class RequestController
                 $password = $data["password"];
 
                 $result = $this->user->login($username, $password);
-                if ($result) {
+
+                if ($result != null) {
                     $_SESSION['user'] = [
                         "userId" => $result,
                         "username" => $username
                     ];
-
 
                     return response(status: 200, message: "เข้าสู่ระบบสำเร็จ!", redirect: '/');
                 } else {
@@ -74,32 +74,55 @@ class RequestController
             case "verify":
                 $response = $this->user->getUserByUserId($data["userId"]);
                 return response(status: $response['status'], data: ["isFound" => $response['isFound']]);
+
             case 'profileVerify':
                 $isVerify = $this->user->isUserProfileVerify($data['userId']);
                 return response(status: $isVerify['status'], message: $isVerify['message'], data: ["isVerify" => $isVerify['isVerify']], type: 'json');
+
+            case 'update':
+                $response = $this->user->updateUserById($data);
+                // print_r($data);
+                // echo "<br>";
+                // print_r($response);
+
+                return response(status: $response['status'], message: $response['message'], redirect: "../?action=profile");
         }
     }
 
     public function eventHandler($form, array $data)
     {
+        $result = null;
+
         switch ($form) {
             case 'create':
                 $result = $this->event->createEvent($data);
-                return response(status: 200, message: "Create event complete", data: $result);
+                return response(status: 200, message: "Create event complete", data: $result, type: 'json', redirect: "../");
             case 'update':
                 $result = $this->event->updateEventById($data);
                 return response(status: 200, message: "Edit event complete", data: $result);
+
             case 'search':
                 $result = $this->event->searchEvent(title: $data['looking'], dateStart: $data['dateStarted'], dateEnd: $data['dateEnded']);
                 return response(status: 200, message: "Search Work", data: $result, type: 'search');
+
+            case 'search_categories':
+                $result = $this->event->searchEventByCategories(dateType: $data['date'] ?? null, eventType: $data['type'] ?? null);
+                return response(status: 200, message: "Search Work", data: $result, type: 'search');
+
             case 'register':
+                $verifyAccount = $this->user->isUserProfileVerify($data['userId']);
+
+                if ($verifyAccount['status'] !== 200) {
+                    return response(status: $verifyAccount['status'], message: $verifyAccount['message'], redirect: '../?action=event.attendee&id=' . $data['eventId']);
+                }
+
                 $eventObj = $this->event->getEventById($data['eventId']);
 
-                if ($eventObj['organizeId'] == $data['userId']) {
-                    return response(status: 409, message: "Organize can't join an self event", redirect: '../?action=event.attendee&id=' . $data['eventId']);
+                if ($eventObj['organizeId'] === $data['userId']) {
+                    return response(status: 409, message: "Organizer can't join their own event", redirect: '../?action=event.attendee&id=' . $data['eventId']);
                 } else {
                     $result = $this->reg->registerEvent(userId: $data['userId'], eventId: $data['eventId']);
-                    return response(status: $result['status'], message: "Register Work", data: $result['data'], redirect: '../?action=event.attendee&id=' . $data['eventId']);
+                    return response(status: $result['status'], message: "Registration successful", data: $result['data'], redirect: '../?action=event.attendee&id=' . $data['eventId']);
                 }
 
             default:
