@@ -166,8 +166,8 @@ class Event
                 u.name AS organizeName,
                 COUNT(CASE WHEN a.status = 'accepted' THEN a.regId END) AS joined
             FROM Event e
-            JOIN Registration r ON e.eventId = r.eventId
-            JOIN Attendance a ON r.regId = a.regId
+            LEFT JOIN Registration r ON e.eventId = r.eventId
+            LEFT JOIN Attendance a ON r.regId = a.regId
             JOIN User u ON e.organizeId = u.userId
             GROUP BY 
                 e.eventId, 
@@ -305,8 +305,8 @@ class Event
                 u.name AS organizeName,
                 COUNT(CASE WHEN a.status = 'accepted' THEN a.regId END) AS joined
             FROM Event e
-            JOIN Registration r ON e.eventId = r.eventId
-            JOIN Attendance a ON r.regId = a.regId
+            LEFT JOIN Registration r ON e.eventId = r.eventId
+            LEFT JOIN Attendance a ON r.regId = a.regId
             JOIN User u ON e.organizeId = u.userId
             WHERE 1=1";
             $params = [];

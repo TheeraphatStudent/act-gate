@@ -132,7 +132,7 @@ class Filter extends Component
                 $selectedType = $_SESSION['selected_type'] ?? '';
                 ?>
                 <select class="input-field cursor-pointer" id="type-select" name="type" onchange="this.form.submit()">
-                    <option value="" <?php echo $selectedType == '' ? 'selected' : ''; ?>>เลือกกิจกรรม</option>
+                    <option <?php echo $selectedType == '' ? 'selected' : ''; ?>>เลือกกิจกรรม</option>
                     <option value="any" <?php echo $selectedType == 'any' ? 'selected' : ''; ?>>ทั้งหมด</option>
                     <option value="online" <?php echo $selectedType == 'online' ? 'selected' : ''; ?>>ออนไลน์</option>
                     <option value="onsite" <?php echo $selectedType == 'onsite' ? 'selected' : ''; ?>>ออนไซต์</option>
