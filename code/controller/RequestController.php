@@ -117,6 +117,7 @@ class RequestController
                 }
 
                 $eventObj = $this->event->getEventById($data['eventId']);
+
                 if ($eventObj['organizeId'] === $data['userId']) {
                     return response(status: 409, message: "Organizer can't join their own event", redirect: '../?action=event.attendee&id=' . $data['eventId']);
                 } else {

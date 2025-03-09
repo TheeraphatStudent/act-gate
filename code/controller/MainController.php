@@ -161,7 +161,7 @@ class MainController
     {
         // print_r($target);
         // echo "<br>";
-        // print_r($data);
+        print_r($data);
 
         $onModel = $target['on'];
         $formContent = $target['form'];

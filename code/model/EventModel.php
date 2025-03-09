@@ -42,13 +42,26 @@ class Event
                 }
             }
 
+            $isUploadedImage = false;
+
             if (isset($_FILES['cover']) && $_FILES['cover']['error'] === UPLOAD_ERR_OK) {
                 $coverImage = uploadFile($_FILES['cover'], $uploadDir);
                 unset($_FILES['cover']);
+
+                $isUploadedImage = true;
             }
 
             if (isset($_FILES['more_pic'])) {
                 $morePics = uploadMultipleFiles($_FILES['more_pic'], $uploadDir);
+
+                $isUploadedImage = true;
+            }
+
+            if ($isUploadedImage === false) {
+                return [
+                    "status" => 500,
+                    "message" => "เกิดข้อผิดพลาระหว่างอัพโหลดรูปภาพ"
+                ];
             }
 
             $more_pic = json_encode($morePics);
@@ -62,6 +75,8 @@ class Event
             $formattedValue = str_pad($newValue, 7, "0", STR_PAD_LEFT);
             $eventId = "AG-" . $now->format('Y') . $formattedValue . uniqid("_event-" . getRandomId(8));
 
+            $userId = $_SESSION['user']['userId'];
+
             $venue = isset($data['venue']) && $data['venue'] !== '' ? $data['venue'] : '0';
             $maximum = isset($data['maximum']) && is_numeric($data['maximum']) ? intval($data['maximum']) : -1;
 
@@ -73,7 +88,7 @@ class Event
             ");
 
             $statement->bindParam(':eventId', $eventId);
-            $statement->bindParam(':organizeId', $_SESSION['user']['userId']);
+            $statement->bindParam(':organizeId', $userId);
             $statement->bindParam(':cover', $coverImage);
             $statement->bindParam(':morePics', $more_pic);
             $statement->bindParam(':title', $data['title']);
@@ -90,7 +105,25 @@ class Event
                 $this->connection->rollBack();
                 return [
                     "status" => 500,
-                    "message" => "Failed to create event."
+                    "message" => "เกิดข้อผิดพลาดระหว่างสร้างกิจกรรม"
+                ];
+            }
+
+            $authorStmt = $this->connection->prepare("
+            INSERT INTO `Author` (`authorId`, `eventId`, `role`) 
+            VALUES (:authorId, :eventId, :role);
+            ");
+
+            $role = "admin";
+            $authorStmt->bindParam(':authorId', $userId);
+            $authorStmt->bindParam(':authorId', $eventId);
+            $authorStmt->bindParam(':role', $role);
+
+            if (!$authorStmt->execute()) {
+                $this->connection->rollBack();
+                return [
+                    "status" => 500,
+                    "message" => "ไม่พบผู้ใช้, ลองเข้าสู่ระบบอีกครั้ง"
                 ];
             }
 
@@ -275,8 +308,9 @@ class Event
 
     public function deleteEventById() {}
 
-    public function getmailbyid($userId) {
-        
+    public function getmailbyid($userId)
+    {
+
         $sql = $this->connection->prepare("CALL GetMail(:userId)");
         $sql->bindParam(':userId', $userId);
 
