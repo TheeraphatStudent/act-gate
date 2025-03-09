@@ -43,15 +43,15 @@ class RequestController
                 $email = $data['email'];
 
                 if ($this->user->getUserByEmail($email)) {
-                    return response(status: 301, message: "Email นี้ถูกใช้งานแล้ว!", redirect: '../?action=register');
+                    return response(status: 301, message: "Email นี้ถูกใช้งานแล้ว!", redirect: '../?action=register', type: 'json');
                 }
 
                 $result = $this->user->register($username, $password, $email);
 
                 if ($result) {
-                    return response(status: 200, message: "ลงทะเบียนสำเร็จ", data: $result, redirect: '../?action=login');
+                    return response(status: 200, message: "ยินดีต้อนรับสมาชิกใหม่, สามารถเข้าสู่ระบบได้แล้ว", data: $result, redirect: '../?action=login', type: 'json');
                 } else {
-                    return response(status: 401, message: "เกิดข้อผิดพลาดในการลงทะเบียน", redirect: '../?action=login');
+                    return response(status: 401, message: "เกิดข้อผิดพลาดในการลงทะเบียน, อีเมลนี้เคยใช้กับบัญชีอื่นแล้ว", redirect: '../?action=login', type: 'json');
                 }
 
             case "login":
@@ -66,9 +66,9 @@ class RequestController
                         "username" => $username
                     ];
 
-                    return response(status: 200, message: "เข้าสู่ระบบสำเร็จ!", redirect: '/');
+                    return response(status: 200, message: "เข้าสู่ระบบสำเร็จ!", redirect: '/', type: 'json');
                 } else {
-                    return response(status: 401, message: "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง!", redirect: '../?action=login');
+                    return response(status: 401, message: "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง!", redirect: '../?action=login', type: 'json');
                 }
 
             case "verify":
@@ -143,8 +143,8 @@ class RequestController
                 // print_r($result);
 
                 return response(
-                    status: 200,
-                    message: "Accept user completed",
+                    status: $result['status'],
+                    message: $result['message'],
                     data: $result,
                     redirect: '../?action=event.statistic&id=' . $data['eventId']
                 );
