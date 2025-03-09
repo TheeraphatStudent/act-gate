@@ -336,7 +336,7 @@ class Event
             }
 
             if (!empty($eventType) && $eventType !== 'any') {
-                $query .= " AND e.type = :type";
+                $query .= " AND e.type = :type OR e.type = 'any'";
                 $params[':type'] = $eventType;
             }
 
@@ -351,6 +351,8 @@ class Event
                 e.venue,
                 e.organizeId, 
                 u.name";
+
+            // var_dump($query);
 
             $stmt = $this->connection->prepare($query);
             $stmt->execute($params);
@@ -369,7 +371,6 @@ class Event
 
     public function getmailbyid($userId)
     {
-
         $sql = $this->connection->prepare("CALL GetMail(:userId)");
         $sql->bindParam(':userId', $userId);
 

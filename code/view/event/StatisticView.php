@@ -14,7 +14,6 @@ $navigate->setPath(
     prevPath: '?action=event.manage'
 );
 
-
 ?>
 
 <head>
