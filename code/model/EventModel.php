@@ -33,6 +33,7 @@ class Event
             $morePics = [];
 
             $requiredFields = ['title', 'description', 'type', 'start', 'end', 'location'];
+
             foreach ($requiredFields as $field) {
                 if (empty($data[$field])) {
                     return [
@@ -116,7 +117,7 @@ class Event
 
             $role = "admin";
             $authorStmt->bindParam(':authorId', $userId);
-            $authorStmt->bindParam(':authorId', $eventId);
+            $authorStmt->bindParam(':eventId', $eventId);
             $authorStmt->bindParam(':role', $role);
 
             if (!$authorStmt->execute()) {
@@ -134,6 +135,7 @@ class Event
                 "message" => "Event (" . $eventId . ") created successfully.",
             ];
         } catch (PDOException $e) {
+            // Database error: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
             $this->connection->rollBack();
             return [
                 "status" => 500,

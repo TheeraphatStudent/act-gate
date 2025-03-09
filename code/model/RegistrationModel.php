@@ -11,18 +11,6 @@ use DateTime;
 use PDO;
 use PDOException;
 
-/* 
-CREATE TABLE Registration (
-  `id`        int AUTO_INCREMENT PRIMARY KEY,
-  `regId`     varchar(255) NOT NULL UNIQUE,
-  `eventId`   varchar(255) NOT NULL,
-  `userId`    varchar(255) NOT NULL,
-  `status`    varchar(100),
-  `updated`   timestamp,
-  `created`   timestamp
-);
-
-*/
 
 class Registration
 {
@@ -106,6 +94,7 @@ class Registration
         }
     }
 
+    // User ส่งคำขอมาที่ Reg table
     public function getUserRegisterByEventAndUserId($userId, $eventId)
     {
         $statement = $this->connection->prepare("CALL GetUsersRegByEventId(:userId, :eventId)");
@@ -152,32 +141,32 @@ class Registration
                 ];
             }
 
-            $author = $this->connection->prepare("
-                SELECT a.id FROM Author a WHERE a.authorId = :authorId AND a.eventId = :eventId
-            ");
+            // $author = $this->connection->prepare("
+            //     SELECT a.id FROM Author a WHERE a.authorId = :authorId AND a.eventId = :eventId
+            // ");
 
-            $author->bindParam(':authorId', $authorId);
-            $author->bindParam(':eventId', $eventId);
-            $author->execute();
+            // $author->bindParam(':authorId', $authorId);
+            // $author->bindParam(':eventId', $eventId);
+            // $author->execute();
 
-            if ($author->rowCount() === 0) {
-                $this->connection->rollBack();
-                return [
-                    "status" => 404,
-                    "isUpdate" => false,
-                    "message" => "คุณไม่ใช่ผู้มีส่วนร่วมในกิจกรรมนี้"
-                ];
-            }
+            // if ($author->rowCount() === 0) {
+            //     $this->connection->rollBack();
+            //     return [
+            //         "status" => 404,
+            //         "isUpdate" => false,
+            //         "message" => "คุณไม่ใช่ผู้มีส่วนร่วมในกิจกรรมนี้"
+            //     ];
+            // }
 
-            $authorId = ($author->fetch(PDO::FETCH_ASSOC))['id'];
+            // $authorId = ($author->fetch(PDO::FETCH_ASSOC))['id'];
 
-            // Attendance table
+            // Att table 
             $attendance = $this->connection->prepare("
                 INSERT INTO `Attendance` (`regId`, `verifyBy`, `status`) 
                 VALUES (:regId, :authorId, :status)
             ");
 
-            $status = "accept";
+            $status = "pending";
             $attendance->bindParam(':regId', $regId);
             $attendance->bindParam(':authorId', $authorId);
             $attendance->bindParam(':status', $status);
