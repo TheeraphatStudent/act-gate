@@ -14,6 +14,8 @@ $filter = new Filter();
 
 $calendar = new SchedulerCalendar();
 
+// print_r($allEvents);
+
 ?>
 
 <!DOCTYPE html>
@@ -63,7 +65,7 @@ $calendar = new SchedulerCalendar();
         </div>
 
         <!-- Content -->
-        <?php if (count([...$allEvents]) > 0) : ?>
+        <?php if ((!empty($allEvents))) : ?>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-content h-full min-h-fit mx-10 px-5 lg:px-16">
                 <?php foreach ($allEvents as $item) :
                     // $dataUrl = "data:image/png;base64," . base64_encode(file_get_contents($item['cover']));
@@ -112,10 +114,10 @@ $calendar = new SchedulerCalendar();
                             <!-- Organize Detail -->
                             <div class="flex flex-row justify-start items-center gap-2.5 px-2.5 py-2 w-full h-fit">
                                 <div class="w-[32px] h-[32px] flex items-center justify-center rounded-full <?= (isset($_SESSION['user']['userId']) && $item['organizeId'] === $_SESSION['user']['userId']) ? 'bg-dark-secondary' : 'bg-primary' ?> text-white text-sm font-bold">
-                                    <?= htmlspecialchars(strtoupper(substr($item['organizeName'], 0, 1))) ?>
+                                    <?= htmlspecialchars(strtoupper(substr(($item['organizeName'] ?? "-"), 0, 1))) ?>
                                 </div>
                                 <span class="text-white text-sm">
-                                    <?= htmlspecialchars($item['organizeName']) ?>
+                                    <?= htmlspecialchars($item['organizeName'] ?? "-") ?>
                                 </span>
                             </div>
                         </div>
@@ -175,15 +177,15 @@ $calendar = new SchedulerCalendar();
                     <div class="flex flex-col justify-center items-center md:items-start gap-3 text-center h-full md:text-left self-center">
                         <div class="font-kanit text-2xl md:text-3xl text-teal-700 leading-tight font-normal">
                             สร้าง<span class="font-bold">&nbsp;</span>
-                            <span class="font-bold underline">อีเวนท์</span>
+                            <a href="../?action=event.create" class="font-bold">อีเวนท์</a>
                             <span class="font-bold">&nbsp;</span>ของคุณได้ทันที
                         </div>
 
-                        <button class="mt-4 md:mt-0 flex justify-center items-center w-full md:w-[300px] h-[60px] rounded-lg shadow-md bg-sky-700 hover:bg-sky-800 transition">
+                        <a href="../?action=event.create" class="mt-4 md:mt-0 flex justify-center items-center w-full md:w-[300px] h-[60px] rounded-lg shadow-md bg-sky-700 hover:bg-sky-800 transition">
                             <span class="font-kanit text-[18px] text-white font-normal">
                                 สร้างเลย
                             </span>
-                        </button>
+                        </a>
                     </div>
 
                 </div>
