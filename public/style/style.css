@@ -1006,6 +1006,10 @@ span{
   left: 1rem;
 }
 
+.-bottom-5{
+  bottom: -1.25rem;
+}
+
 .z-10{
   z-index: 10;
 }
