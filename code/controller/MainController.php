@@ -106,8 +106,8 @@ class MainController
 
                 case 'attendee':
                     $regObj = $regModel->getRegisterById(userId: $userId, eventId: $eventId);
+                    $eventObj = $eventModel->getEventById($eventId);
 
-                    // print_r($regObj);
                     require_once("./view/event/AttendeeView.php");
                     break;
 
