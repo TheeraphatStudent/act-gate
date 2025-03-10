@@ -134,7 +134,7 @@ $navigate->setPath(
                             <?php endforeach ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="5" class="py-10 text-center text-2xl text-gray-500">ยังไม่มีผู้เข้าร่วมกิจกรรมในขณะนี้</td>
+                                <td colspan="6" class="py-10 text-center text-2xl text-gray-500">ยังไม่มีผู้เข้าร่วมกิจกรรมในขณะนี้</td>
                             </tr>
                         <?php endif ?>
                     </tbody>
