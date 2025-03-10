@@ -1963,9 +1963,9 @@ span{
   background-color: rgb(229 231 235 / var(--tw-bg-opacity, 1));
 }
 
-.bg-gray-500{
+.bg-gray-400{
   --tw-bg-opacity: 1;
-  background-color: rgb(107 114 128 / var(--tw-bg-opacity, 1));
+  background-color: rgb(156 163 175 / var(--tw-bg-opacity, 1));
 }
 
 .bg-green{
@@ -2064,11 +2064,6 @@ span{
 .bg-yellow{
   --tw-bg-opacity: 1;
   background-color: rgb(255 193 69 / var(--tw-bg-opacity, 1));
-}
-
-.bg-gray-400{
-  --tw-bg-opacity: 1;
-  background-color: rgb(156 163 175 / var(--tw-bg-opacity, 1));
 }
 
 .bg-opacity-50{
@@ -2887,9 +2882,9 @@ span{
   background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
 }
 
-.hover\:bg-gray-700:hover{
+.hover\:bg-gray-800:hover{
   --tw-bg-opacity: 1;
-  background-color: rgb(55 65 81 / var(--tw-bg-opacity, 1));
+  background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:bg-light-green:hover{
@@ -2951,11 +2946,6 @@ span{
 
 .hover\:bg-white\/10:hover{
   background-color: rgb(251 248 238 / 0.1);
-}
-
-.hover\:bg-gray-800:hover{
-  --tw-bg-opacity: 1;
-  background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:text-dark-primary:hover{

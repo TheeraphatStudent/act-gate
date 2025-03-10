@@ -114,6 +114,8 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                                     $status = (isset($regObj['data']['status']) ? trim($regObj['data']['status']) : null) ?? 'default';
                                     $status = in_array($status, Register::REGISTER_STATUS) ? $status : 'default';
 
+                                    // print_r($status);
+
                                     foreach ($buttons[$status] as $button) {
                                         echo "<button type='button' class='{$button['class']}' id='{$button['id']}'><span>{$button['label']}</span></button>";
                                     }
