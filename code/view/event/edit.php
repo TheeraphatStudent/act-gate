@@ -11,9 +11,6 @@ use FinalProject\Components\Breadcrumb;
 use FinalProject\Components\Map;
 use FinalProject\Components\TextEditor;
 
-$map = new Map();
-$map->setDefaultLocation($lat, $lon);
-
 $textEditor = new TextEditor();
 $textEditor->updatetextarea(description: $eventObj['description'], isEdit: true);
 
@@ -138,12 +135,15 @@ $authors = array_map(function ($type) {
                         <div class="flex flex-col w-full gap-2.5">
                             <div
                                 class="form-title">
-                                Link&nbsp;
-                                <span class="form-required">*</span>
+                                Link
                             </div>
                             <input
-                                class="input-field" name="link" type="text" placeholder="Enter link" value="<?php echo htmlspecialchars($eventObj['link']) ?>">
-
+                                class="input-field"
+                                name="link"
+                                type="url"
+                                value="<?php echo htmlspecialchars($eventObj['link'] ?? "") ?>"
+                                placeholder="https://example.com"
+                                pattern="https?:\/\/.*">
                         </div>
                     </div>
 
@@ -155,7 +155,7 @@ $authors = array_map(function ($type) {
                                         Start&nbsp;
                                         <span class="form-required">*</span>
                                     </div>
-                                    <input class="input-field" type="datetime-local" name="start[]" placeholder="Enter started time">
+                                    <input class="input-field" type="datetime-local" name="start" placeholder="Enter started time">
                                 </div>
                                 <div class="flex flex-col w-1/2 gap-2.5">
                                     <div class="form-title">
@@ -163,25 +163,11 @@ $authors = array_map(function ($type) {
                                         <span class="form-required">*</span>
                                     </div>
                                     <div class="flex w-full gap-2.5">
-                                        <input class="input-field w-full" type="datetime-local" name="end[]" placeholder="Enter ended time">
+                                        <input class="input-field w-full" type="datetime-local" name="end" placeholder="Enter ended time">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="flex w-full gap-5 *:flex">
-                        <button type="button" id="add-datetime" class="justify-center w-full bg-light-secondary text-secondary px-4 py-2 rounded active:bg-dark-secondary hover:bg-dark-secondary/80">
-                            <span class="flex items-center justify-center gap-3">
-                                <img src="public/icons/added.svg" alt="add icon" width="15" height="15">
-                                Date
-                            </span>
-                        </button>
-                        <button type="button" id="deleted-datetime" class="justify-center w-full bg-light-red text-red px-4 py-2 rounded active:bg-dark-red hover:bg-dark-red/80">
-                            <span class="flex items-center justify-center gap-3">
-                                <img src="public/icons/delete.svg" alt="del icon" width="15" height="15">
-                                Delete
-                            </span>
-                        </button>
                     </div>
 
                     <!-- <div class="flex flex-row w-full justify-start items-start gap-5 ">
@@ -200,18 +186,6 @@ $authors = array_map(function ($type) {
                         </div>
                     </div> -->
                 </div>
-
-                <!-- <div class="justify-start items-start w-full">
-                    <div class="flex flex-col w-full justify-start items-start gap-5">
-                        <div
-                            class="form-title">
-                            Location&nbsp;
-                        </div>
-                        <?php
-                        $map->render();
-                        ?>
-                    </div>
-                </div> -->
             </div>
 
             <h1 class="text-white font-semibold">Event description</h1>
@@ -239,7 +213,7 @@ $authors = array_map(function ($type) {
                     <span class="form-required">*</span>
                 </div>
 
-                <div class="flex w-full gap-5 overflow-auto">
+                <div class="flex w-full gap-5 overflow-auto" id="imagesWheel">
                     <div id="images-container" class="flex gap-4 w-fit">
                         <label id="add-image-btn" class="flex flex-col justify-center items-center gap-2.5 py-5 rounded-2xl border-white border-2 border-dashed min-w-80 min-h-[180px] shadow-sm cursor-pointer hover:bg-white/10 transition-colors">
                             <div class="flex flex-col justify-center items-center gap-2.5 w-[76px] h-20">
@@ -293,7 +267,7 @@ $authors = array_map(function ($type) {
     </script>
 
     <!-- Date Time -->
-    <script>
+    <!-- <script>
         document.addEventListener('DOMContentLoaded', () => {
             const container = document.getElementById('datetime-container');
 
@@ -332,10 +306,10 @@ $authors = array_map(function ($type) {
                 }
             });
         });
-    </script>
+    </script> -->
 
     <!-- Multi Selected Option -->
-    <script>
+    <!-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             const multiSelect = document.getElementById('author-selected');
 
@@ -358,7 +332,7 @@ $authors = array_map(function ($type) {
                 console.log('Selected values:', selectedOptions);
             });
         });
-    </script>
+    </script> -->
 
     <!-- Image input -->
     <script>
@@ -529,6 +503,16 @@ $authors = array_map(function ($type) {
                     elementToRemove.remove();
                 }
             }
+        });
+    </script>
+
+    <!-- Scroll -->
+    <script>
+        const container = document.getElementById("imagesWheel");
+
+        container.addEventListener("wheel", function(event) {
+            event.preventDefault();
+            container.scrollLeft += event.deltaY;
         });
     </script>
 </body>

@@ -83,3 +83,13 @@ const fetchBlobFile = async (blobUrl, fileName) => {
 };
 ";
 }
+
+function removeFile($fileName, $saveDir) {
+    $filePath = rtrim($saveDir, '/') . '/' . $fileName;
+    if (file_exists($filePath)) {
+        return unlink($filePath);
+        
+    }
+
+    return false;
+}

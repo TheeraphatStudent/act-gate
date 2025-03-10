@@ -120,11 +120,12 @@ $authors = array_map(function ($type) {
                         <div class="flex flex-col w-full gap-2.5">
                             <div
                                 class="form-title">
-                                Link&nbsp;
-                                <span class="form-required">*</span>
+                                Link
                             </div>
                             <input
-                                class="input-field" name="link" type="text" placeholder="Enter link">
+                                class="input-field" name="link" type="url"
+                                placeholder="https://example.com"
+                                pattern="https?:\/\/.*">
 
                         </div>
                     </div>
@@ -265,7 +266,7 @@ $authors = array_map(function ($type) {
                 try {
                     const formData = new FormData(form);
                     const response = await fetch(form.action, {
-                        method: form.method, 
+                        method: form.method,
                         body: formData
                     });
 
@@ -276,7 +277,7 @@ $authors = array_map(function ($type) {
                         await Swal.fire({
                             icon: "success",
                             title: "สำเร็จ",
-                            text: "สร้างกิจกรรมเสร็จสิ้น!", 
+                            text: "สร้างกิจกรรมเสร็จสิ้น!",
                         });
 
                         window.location.href = `${result?.redirect}`
@@ -292,7 +293,7 @@ $authors = array_map(function ($type) {
                     console.error(error);
                     console.error(error.message);
                     Swal.fire({
-                        icon: "error", 
+                        icon: "error",
                         title: "เกิดข้อผิดพลาด",
                         text: `${error.message || "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้, โปรดติดต่อนักพัฒนา"}`
                     });

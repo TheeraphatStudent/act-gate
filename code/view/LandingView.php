@@ -173,7 +173,7 @@ $calendar = new SchedulerCalendar();
                     <div class="flex flex-col justify-center items-center md:items-start gap-3 text-center h-full md:text-left self-center">
                         <div class="font-kanit text-2xl md:text-3xl text-teal-700 leading-tight font-normal">
                             สร้าง<span class="font-bold">&nbsp;</span>
-                            <a href="../?action=event.create" class="font-bold" style="text-decoration: underline;">อีเวนท์</a>
+                            <a href="../?action=event.create" class="font-bold" style="text-decoration: underline;">กิจกรรม</a>
                             <span class="font-bold">&nbsp;</span>ของคุณได้ทันที
                         </div>
 

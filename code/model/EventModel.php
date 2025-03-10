@@ -16,6 +16,7 @@ use Exception;
 class Event
 {
     private $connection;
+    private $requiredFields = ['title', 'description', 'type', 'start', 'end', 'location', 'cover', 'more_pic[]'];
 
     public function __construct($connection)
     {
@@ -32,9 +33,7 @@ class Event
             $coverImage = null;
             $morePics = [];
 
-            $requiredFields = ['title', 'description', 'type', 'start', 'end', 'location'];
-
-            foreach ($requiredFields as $field) {
+            foreach ($this->requiredFields as $field) {
                 if (empty($data[$field])) {
                     return [
                         "status" => 400,
@@ -61,7 +60,7 @@ class Event
             if ($isUploadedImage === false) {
                 return [
                     "status" => 500,
-                    "message" => "เกิดข้อผิดพลาระหว่างอัพโหลดรูปภาพ"
+                    "message" => "เกิดข้อผิดพลาระหว่างอัพโหลดรูปภาพกิจกรรม"
                 ];
             }
 
@@ -189,8 +188,6 @@ class Event
         return $result;
     }
 
-    public function getUsersByRegId($regId) {}
-
     public function getAllEventsById($userId)
     {
         $statement = $this->connection->prepare("CALL GetAllEventsByUserId(:userId)");
@@ -219,42 +216,39 @@ class Event
 
     public function updateEventById($data = [])
     {
-        // print_r($_SESSION);
-        // echo "<br>";
-        // print_r($data);
+        try {
+            $this->connection->beginTransaction();
 
-        $sql = $this->connection->prepare(
-            "UPDATE Event 
-            SET 
-                title = :title, 
-                description = :description, 
-                venue = :venue, 
-                maximum = :maximum, 
-                type = :type, 
-                link = :link, 
-                updated = :updated 
-            WHERE eventId = :eventId AND organizeId = :organizeId"
-        );
+            $uploadDir = '/var/www/html/public/images/uploads/';
+            $coverImage = null;
+            $morePics = [];
 
-        $now = (new DateTime())->format('Y-m-d H:i:s');
+            foreach ($this->requiredFields as $field) {
+                if (empty($data[$field])) {
+                    return [
+                        "status" => 400,
+                        "message" => "Missing required field: $field"
+                    ];
+                }
+            }
 
-        $sql->bindParam(':eventId', $data['eventId']);
-        $sql->bindParam(':organizeId', $_SESSION['user']['userId']);
-        $sql->bindParam(':title', $data['title']);
-        $sql->bindParam(':description', $data['description']);
-        $sql->bindParam(':venue', $data['venue']);
-        $sql->bindParam(':maximum', $data['maximum']);
-        $sql->bindParam(':type', $data['type']);
-        $sql->bindParam(':link', $data['link']);
-        $sql->bindParam(':updated', $now);
-
-        $sql->execute();
-
-        $rowCount = $sql->rowCount();
-        if ($rowCount > 0) {
-            return ["It worked, $rowCount rows updated"];
-        } else {
-            return ["No rows updated, check the eventId or organizeId"];
+            var_dump($data);
+            
+            return [
+                "status" => 201,
+                "message" => "Update event complete!",
+            ];
+        } catch (PDOException $e) {
+            $this->connection->rollBack();
+            return [
+                "status" => 500,
+                "message" => "Database error: " . $e->getMessage()
+            ];
+        } catch (Exception $e) {
+            return [
+                "status" => 500,
+                "message" => "Error: " . $e->getMessage()
+            ];
         }
     }
 
