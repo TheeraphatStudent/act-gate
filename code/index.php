@@ -4,7 +4,7 @@ namespace FinalProject;
 
 ini_set('session.cookie_secure', false);
 ini_set('session.cookie_httponly', true);
-ini_set('session.cookie_lifetime', 60 * 15);
+ini_set('session.cookie_lifetime', (60 * 60));
 ini_set('session.cookie_samesite', 'Lax');
 
 session_start();
