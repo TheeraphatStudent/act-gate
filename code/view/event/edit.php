@@ -127,7 +127,9 @@ $authors = array_map(function ($type) {
                             <!-- <input class="input-field" type="" name="venue" placeholder="Enter venue"> -->
                             <select name="type" class="input-field">
                                 <?php foreach ($formOptions as $option): ?>
-                                    <option value="<?= $option['value'] ?>"><?= $option['label'] ?></option>
+                                    <option value="<?= $option['value'] ?>" <?= ($eventObj['type'] === $option['value']) ? 'selected' : '' ?>>
+                                        <?= $option['label'] ?>
+                                    </option>
                                 <?php endforeach; ?>
                             </select>
 
@@ -155,7 +157,7 @@ $authors = array_map(function ($type) {
                                         Start&nbsp;
                                         <span class="form-required">*</span>
                                     </div>
-                                    <input class="input-field" type="datetime-local" name="start" placeholder="Enter started time">
+                                    <input class="input-field" type="datetime-local" name="start" placeholder="Enter started time" value="<?php echo date('Y-m-d\TH:i', strtotime(str_replace('/', '-', $eventObj['start']))); ?>">
                                 </div>
                                 <div class="flex flex-col w-1/2 gap-2.5">
                                     <div class="form-title">
@@ -163,7 +165,7 @@ $authors = array_map(function ($type) {
                                         <span class="form-required">*</span>
                                     </div>
                                     <div class="flex w-full gap-2.5">
-                                        <input class="input-field w-full" type="datetime-local" name="end" placeholder="Enter ended time">
+                                        <input class="input-field" type="datetime-local" name="end" placeholder="Enter started time" value="<?php echo date('Y-m-d\TH:i', strtotime(str_replace('/', '-', $eventObj['end']))); ?>">
                                     </div>
                                 </div>
                             </div>
@@ -185,6 +187,22 @@ $authors = array_map(function ($type) {
 
                         </div>
                     </div> -->
+
+                    <div class="flex flex-row w-full justify-start items-start gap-5 ">
+                        <div class="flex flex-col w-full gap-2.5">
+                            <div
+                                class="form-title">
+                                Location&nbsp;
+                                <span class="form-required">*</span>
+                            </div>
+                            <textarea
+                                required
+                                minlength="20"
+                                class="input-field"
+                                name="location"
+                                placeholder="Enter event location"><?php echo htmlspecialchars($eventObj['location']) ?></textarea>
+                        </div>
+                    </div>
                 </div>
             </div>
 

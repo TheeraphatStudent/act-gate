@@ -161,7 +161,7 @@ $authors = array_map(function ($type) {
                                 <span class="form-required">*</span>
                             </div>
                             <textarea require minlength="20"
-                                class="input-field" type="number" name="location" placeholder="Enter event location"></textarea>
+                                class="input-field" type="text" name="location" placeholder="Enter event location"></textarea>
 
                         </div>
                     </div>
