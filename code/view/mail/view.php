@@ -104,21 +104,39 @@ $navigate = new Breadcrumb();
                                         class="w-5 h-5" />
                                 </div> -->
 
-                                <div class="flex justify-between items-center px-4 py-2 rounded-lg bg-primary hover:cursor-pointer hover:bg-dark-primary flex-grow">
-                                    <div class="flex items-center gap-2">
-                                        <img
-                                            class="w-6 h-6"
-                                            src="public/icons/ticket.svg"
-                                            alt="Ticket" />
-                                        <span class="text-sm text-white font-medium">บัตรเข้างาน</span>
+                                <?php if ($about['att_status'] === 'pending'): ?>
+                                    <div class="flex justify-between items-center px-4 py-2 rounded-lg bg-yellow hover:cursor-pointer hover:bg-dark-yellow flex-grow">
+                                        <div class="flex items-center gap-2">
+                                            <!-- <img
+                                                class="w-6 h-6"
+                                                src="public/icons/ticket.svg"
+                                                alt="Ticket" /> -->
+                                            <span class="text-sm text-white font-medium">รออนุมัติ</span>
+                                        </div>
+                                        <!-- <div class="flex justify-center items-center w-6 h-6">
+                                            <img
+                                                class="w-3 h-3"
+                                                src="public/icons/arrow-right.svg"
+                                                alt="Arrow" />
+                                        </div> -->
                                     </div>
-                                    <div class="flex justify-center items-center w-6 h-6">
-                                        <img
-                                            class="w-3 h-3"
-                                            src="public/icons/arrow-right.svg"
-                                            alt="Arrow" />
+                                <?php else: ?>
+                                    <div class="flex justify-between items-center px-4 py-2 rounded-lg bg-primary hover:cursor-pointer hover:bg-dark-primary flex-grow">
+                                        <div class="flex items-center gap-2">
+                                            <img
+                                                class="w-6 h-6"
+                                                src="public/icons/ticket.svg"
+                                                alt="Ticket" />
+                                            <span class="text-sm text-white font-medium">บัตรเข้างาน</span>
+                                        </div>
+                                        <div class="flex justify-center items-center w-6 h-6">
+                                            <img
+                                                class="w-3 h-3"
+                                                src="public/icons/arrow-right.svg"
+                                                alt="Arrow" />
+                                        </div>
                                     </div>
-                                </div>
+                                <?php endif ?>
                             </div>
                         </div>
                     </div>
