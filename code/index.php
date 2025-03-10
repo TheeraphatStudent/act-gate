@@ -2,9 +2,10 @@
 
 namespace FinalProject;
 
-ini_set('session.cookie_secure', true);
+ini_set('session.cookie_secure', false);
 ini_set('session.cookie_httponly', true);
 ini_set('session.cookie_lifetime', 60 * 15);
+ini_set('session.cookie_samesite', 'Lax');
 
 session_start();
 
@@ -192,6 +193,8 @@ if (!$isRequest) {
         if ($action == 'logged-out' || !in_array($action, NOT_RENDER_NAVBAR_AND_ALERT)) {
             $navbar->render();
         }
+
+        print_r($_SESSION);
 
         $content
         ?>
