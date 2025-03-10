@@ -194,8 +194,6 @@ if (!$isRequest) {
             $navbar->render();
         }
 
-        print_r($_SESSION);
-
         $content
         ?>
     </body>

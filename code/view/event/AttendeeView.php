@@ -87,8 +87,11 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                                 method="post"
                                 class="flex flex-col gap-2.5"
                                 id="regForm">
-                                <?php if (!empty($_SESSION['user']) && isset($_SESSION['user']['userId'])): ?>
+                                <?php if ($_GET['joined'] >= $eventObj['maximum']): ?>
+                                    <button type="button" class="btn-gray">เต็ม</button>
+                                <?php elseif (!empty($_SESSION['user']) && isset($_SESSION['user']['userId'])): ?>
                                     <input type="hidden" name="eventId" value="<?= htmlspecialchars($eventObj['eventId']) ?>">
+                                    <input type="hidden" name="joined" value="<?= $_GET['joined'] ?>">
                                     <input type="hidden" name="userId" value="<?= htmlspecialchars($_SESSION['user']['userId']) ?>">
 
                                     <?php
