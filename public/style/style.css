@@ -994,6 +994,10 @@ span{
   margin: 0.125rem;
 }
 
+.m-0{
+  margin: 0px;
+}
+
 .mx-1{
   margin-left: 0.25rem;
   margin-right: 0.25rem;
@@ -1339,6 +1343,30 @@ span{
   min-height: fit-content;
 }
 
+.min-h-8{
+  min-height: 2rem;
+}
+
+.min-h-6{
+  min-height: 1.5rem;
+}
+
+.min-h-4{
+  min-height: 1rem;
+}
+
+.min-h-3\.5{
+  min-height: 0.875rem;
+}
+
+.min-h-3{
+  min-height: 0.75rem;
+}
+
+.min-h-2\.5{
+  min-height: 0.625rem;
+}
+
 .w-1\/2{
   width: 50%;
 }
@@ -1486,6 +1514,30 @@ span{
 
 .min-w-full{
   min-width: 100%;
+}
+
+.min-w-8{
+  min-width: 2rem;
+}
+
+.min-w-6{
+  min-width: 1.5rem;
+}
+
+.min-w-4{
+  min-width: 1rem;
+}
+
+.min-w-3\.5{
+  min-width: 0.875rem;
+}
+
+.min-w-3{
+  min-width: 0.75rem;
+}
+
+.min-w-2\.5{
+  min-width: 0.625rem;
 }
 
 .max-w-2xl{
