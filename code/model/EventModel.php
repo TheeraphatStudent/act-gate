@@ -251,49 +251,57 @@ class Event
 
                     unset($_FILES['cover']);
                     unset($_FILES['cover_exist']);
-
                 } else {
                     // $coverImage = uploadFile($_FILES['cover'], $uploadDir);
                     $coverImage = $_FILES['cover']['name'];
-
                 }
 
                 $isUploadedImage = true;
             } else {
                 return [
                     "status" => 404,
-                    "message" => "Error: Banner image not found"
+                    "message" => "ไม่พบรูปภาพแบนเนอร์"
                 ];
             }
 
-            // if (isset($_FILES['more_pic']) && isset($_FILES['more_pic_exist'])) {
-            //     foreach ($_FILES['more_pic_exist']['name'] as $existingImage) {
-            //         if (!in_array($existingImage, $_FILES['more_pic']['name'])) {
+            // if (isset($_FILES['more_pic'])) {
+            //     if (isset($_FILES['more_pic_exist'])) {
+            //         foreach ($_FILES['more_pic_exist']['name'] as $existingImage) {
             //             removeFile(fileName: $existingImage, saveDir: $uploadDir);
             //         }
             //     }
 
             //     foreach ($_FILES['more_pic']['name'] as $index => $filename) {
-            //         if (in_array($filename, $_FILES['more_pic_exist']['name'])) {
-            //             $morePics[] = $filename;
-            //         } else {
-            //             $tempFile = [
-            //                 'name' => $_FILES['more_pic']['name'][$index],
-            //                 'type' => $_FILES['more_pic']['type'][$index],
-            //                 'tmp_name' => $_FILES['more_pic']['tmp_name'][$index],
-            //                 'error' => $_FILES['more_pic']['error'][$index],
-            //                 'size' => $_FILES['more_pic']['size'][$index]
-            //             ];
+            //         $tempFile = [
+            //             'name' => $_FILES['more_pic']['name'][$index],
+            //             'type' => $_FILES['more_pic']['type'][$index], 
+            //             'tmp_name' => $_FILES['more_pic']['tmp_name'][$index],
+            //             'error' => $_FILES['more_pic']['error'][$index],
+            //             'size' => $_FILES['more_pic']['size'][$index]
+            //         ];
 
-            //             $uploadedFile = uploadFile($tempFile, $uploadDir);
+            //         $uploadedFile = uploadFile($tempFile, $uploadDir);
 
-            //             if ($uploadedFile) {
-            //                 $morePics[] = $uploadedFile;
-            //             }
+            //         if ($uploadedFile) {
+            //             $morePics[] = $uploadedFile;
             //         }
             //     }
+
             //     $isUploadedImage = true;
             // }
+
+            if (isset($_FILES['more_pic'])) {
+                if (isset($_FILES['more_pic_exist'])) {
+                    foreach ($_FILES['more_pic_exist']['name'] as $existingFile) {
+                        if (!empty($existingFile)) {
+                            removeFile(fileName: $existingFile, saveDir: $uploadDir);
+                        }
+                    }
+                }
+
+                $morePics = uploadMultipleFiles($_FILES['more_pic'], $uploadDir);
+                $isUploadedImage = true;
+            }
 
             if ($isUploadedImage === false) {
                 return [
@@ -304,13 +312,8 @@ class Event
 
             $more_pic = json_encode($morePics);
 
-            $now = new DateTime();
-            $lastCols = $this->connection->prepare("SELECT id FROM Event ORDER BY id DESC LIMIT 1");
-            $lastCols->execute();
-            $getCols = $lastCols->fetchColumn();
+            $now = (new DateTime())->format('Y-m-d H:i:s');
 
-            $newValue = ($getCols !== false) ? intval($getCols) + 1 : 1;
-            $formattedValue = str_pad($newValue, 7, "0", STR_PAD_LEFT);
             $eventId = $data['eventId'];
 
             $userId = $_SESSION['user']['userId'];
@@ -331,6 +334,7 @@ class Event
                     link = :link,
                     start = :start,
                     end = :end,
+                    updated = :updated,
                     location = :location
                 WHERE eventId = :eventId
             ");
@@ -349,6 +353,7 @@ class Event
             $statement->bindParam(':link', $data['link']);
             $statement->bindParam(':start', $data['start']);
             $statement->bindParam(':end', $data['end']);
+            $statement->bindParam(':updated', $now);
             $statement->bindParam(':location', $data['location']);
 
             if (!$statement->execute()) {
