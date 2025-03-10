@@ -239,15 +239,25 @@ class Event
 
             if (isset($_FILES['cover']) && $_FILES['cover']['error'] === UPLOAD_ERR_OK) {
                 if (isset($_FILES['cover_exist']) && $_FILES['cover']['name'] !== $_FILES['cover_exist']['name']) {
-                    if (isset($_FILES['cover_exist']['name'])) {
-                        removeFile(fileName: $_FILES['cover_exist']['name'], saveDir: $uploadDir);
+                    if (isset($_FILES['cover_exist']['name']) && $_FILES['cover_exist']['name'] !== '') {
+                        $fullPath = $uploadDir . $_FILES['cover_exist']['name'];
+
+                        if (file_exists($fullPath)) {
+                            removeFile(fileName: $_FILES['cover_exist']['name'], saveDir: $uploadDir);
+                        }
                     }
+
                     $coverImage = uploadFile($_FILES['cover'], $uploadDir);
+
                     unset($_FILES['cover']);
                     unset($_FILES['cover_exist']);
+
                 } else {
-                    $coverImage = uploadFile($_FILES['cover'], $uploadDir);
+                    // $coverImage = uploadFile($_FILES['cover'], $uploadDir);
+                    $coverImage = $_FILES['cover']['name'];
+
                 }
+
                 $isUploadedImage = true;
             } else {
                 return [
@@ -301,7 +311,7 @@ class Event
 
             $newValue = ($getCols !== false) ? intval($getCols) + 1 : 1;
             $formattedValue = str_pad($newValue, 7, "0", STR_PAD_LEFT);
-            $eventId = "AG-" . $now->format('Y') . $formattedValue . uniqid("_event-" . getRandomId(8));
+            $eventId = $data['eventId'];
 
             $userId = $_SESSION['user']['userId'];
 
@@ -324,6 +334,8 @@ class Event
                     location = :location
                 WHERE eventId = :eventId
             ");
+
+            // print_r($coverImage);
 
             $statement->bindParam(':eventId', $eventId);
             $statement->bindParam(':organizeId', $userId);

@@ -88,10 +88,11 @@ function removeFile($fileName, $saveDir)
 {
     $filePath = rtrim($saveDir, '/') . '/' . $fileName;
 
-    print_r("Remove file work!");
+    // print_r("Remove file work!");
 
     if (file_exists($filePath)) {
-        return unlink($filePath);
+        unlink($filePath);
+        return true;
     }
 
     return false;
