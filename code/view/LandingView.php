@@ -153,7 +153,7 @@ $calendar = new SchedulerCalendar();
                     $textArray = preg_split('//u', $text, -1, PREG_SPLIT_NO_EMPTY);
 
                     foreach ($textArray as $key => $value) {
-                        echo "<span> $value </span>";
+                        echo "<span class='text-6xl'> $value </span>";
                     }
                     ?>
                 </div>

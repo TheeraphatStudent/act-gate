@@ -112,7 +112,7 @@ class RequestController
 
             case 'update':
                 $result = $this->event->updateEventById($data);
-                return response(status: $result['status'], message: $result['message'], type: 'json', redirect: "../?action=event.manage");
+                return response(status: $result['status'], message: $result['message'], data: $data, type: 'json', redirect: "../?action=event.manage");
 
             case 'search':
                 $result = $this->event->searchEvent(title: $data['looking'], dateStart: $data['dateStarted'], dateEnd: $data['dateEnded']);

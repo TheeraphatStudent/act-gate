@@ -80,8 +80,6 @@ $authors = array_map(function ($type) {
             <!-- <h1 class="text-white font-semibold">Edit Event</h1> -->
             <?php $navigate->render(); ?>
 
-            <!-- <?php print_r($eventObj) ?> -->
-
             <div class="flex flex-col md:flex-row justify-between items-start w-full gap-12 *:flex *:flex-col">
 
                 <div class="justify-start items-start w-full gap-5">
@@ -213,7 +211,10 @@ $authors = array_map(function ($type) {
                     Cover&nbsp;
                     <span class="form-required">*</span>
                 </div>
-                <label id="cover_label" for="cover_img" class="bg-cover flex relative flex-col items-center justify-center w-full h-[450px] gap-2.5 bg-black/55 p-4 group hover:cursor-pointer rounded-xl overflow-hidden">
+                <label
+                    id="cover_label"
+                    for="cover_img"
+                    class="bg-cover flex relative flex-col items-center justify-center w-full h-[450px] gap-2.5 bg-black/55 p-4 group hover:cursor-pointer rounded-xl overflow-hidden">
                     <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-60 transition-opacity duration-300"></div>
 
                     <img id="upload_icon" src="public/icons/upload.svg" alt="upload image"
@@ -222,6 +223,7 @@ $authors = array_map(function ($type) {
                         Upload Cover
                     </span>
                     <input required type="file" accept=".png, .jpg, .jpeg" id="cover_img" name="cover" class="hidden">
+                    <input type="file" accept=".png, .jpg, .jpeg" id="cover_img_exist" name="cover_exist" class="hidden">
                 </label>
             </div>
 
@@ -262,95 +264,78 @@ $authors = array_map(function ($type) {
             </div>
 
             <div class="flex w-full justify-start items-start gap-5">
-                <button type="button" class="w-1/3 btn-danger">Cancel</button>
-                <button type="submit" class="w-full btn-secondary">Update</button>
+                <button type="button" class="w-1/3 btn-danger" onclick="window.history.back()">Cancel</button>
+                <button type="submit" class="w-full btn-secondary">Update event</button>
             </div>
 
         </form>
 
     </div>
 
-    <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
-
     <!-- Validate Form -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('form-content');
 
-            form.addEventListener('submit', () => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
 
-            })
+                try {
+                    const formData = new FormData(form);
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: formData
+                    });
 
-        });
-    </script>
+                    switch (response.status) {
+                        case 201:
+                            await Swal.fire({
+                                title: 'แก้ไขกิจกรรมเสร็จสิ้น!',
+                                text: response?.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            });
+                            window.location.href = '?action=event.manage';
+                            break;
 
-    <!-- Date Time -->
-    <!-- <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const container = document.getElementById('datetime-container');
+                        case 400:
+                            await Swal.fire({
+                                title: 'ข้อมูลไม่ครบ',
+                                text: response?.message,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                            break;
 
-            const addButton = document.getElementById('add-datetime');
-            const delButton = document.getElementById('deleted-datetime');
+                        case 404:
+                            await Swal.fire({
+                                title: 'เกิดข้อผิดพลาด',
+                                text: response?.message,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                            break;
 
-            const newDateTimeSet = document.createElement('div');
-            addButton.addEventListener('click', () => {
-                newDateTimeSet.className = 'flex flex-row w-full justify-start items-start gap-5 added-field';
-                newDateTimeSet.innerHTML = `
-                <div class="flex flex-col w-full">
-                    <input class="input-field start-field" type="datetime-local" name="start[]" placeholder="Enter started time">
-                </div>
-                <div class="flex flex-col w-full">
-                    <input class="input-field end-field" type="datetime-local" name="end[]" placeholder="Enter ended time">
-                </div>
-            `;
-
-                container.appendChild(newDateTimeSet);
-
-                newDateTimeSet.offsetHeight;
-                newDateTimeSet.classList.add('show');
-            });
-
-            delButton.addEventListener('click', () => {
-                const addedContent = document.getElementsByClassName('added-field');
-                if (addedContent.length > 0) {
-                    const lastField = addedContent[addedContent.length - 1];
-
-                    lastField.classList.remove('show');
-
-                    lastField.addEventListener('transitionend', handler = () => {
-                        container.removeChild(lastField);
-                        lastField.removeEventListener('transitionend', handler);
+                        default:
+                            await Swal.fire({
+                                title: 'เกิดข้อผิดพลาด',
+                                text: response?.message,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                    }
+                } catch (error) {
+                    await Swal.fire({
+                        title: 'Error',
+                        text: 'Failed to connect to server',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
                     });
                 }
             });
         });
-    </script> -->
-
-    <!-- Multi Selected Option -->
-    <!-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const multiSelect = document.getElementById('author-selected');
-
-            multiSelect.addEventListener('mousedown', function(e) {
-                e.preventDefault();
-
-                const option = e.target;
-                if (option.tagName === 'OPTION') {
-                    option.selected = !option.selected;
-
-                    const event = new Event('change');
-                    this.dispatchEvent(event);
-                }
-            });
-
-            multiSelect.addEventListener('change', function(e) {
-                const selectedOptions = Array.from()
-                    .map(option => option.value);
-
-                console.log('Selected values:', selectedOptions);
-            });
-        });
-    </script> -->
+    </script>
 
     <!-- Image input -->
     <script>
@@ -377,14 +362,13 @@ $authors = array_map(function ($type) {
             };
 
             // Cover Img
-
             const defaultImageUrl = "public/images/uploads/";
             const coverPath = `${defaultImageUrl}<?= $eventObj['cover'] ?>`;
 
             const coverInput = document.getElementById('cover_img');
-            // const coverField = document.getElementById('coverImgField');
+            const coverExist = document.getElementById('cover_img_exist');
+
             const coverPreview = document.getElementById('cover_label');
-            // console.log(`${defaultImageUrl}<?= $eventObj['cover'] ?>`);
 
             if (coverPreview) {
                 coverPreview.style.backgroundImage = `url(${coverPath})`;
@@ -393,6 +377,7 @@ $authors = array_map(function ($type) {
 
             if (coverInput) {
                 coverInput.files = await getFileInputFromUrl(coverPath);
+                coverExist.files = await getFileInputFromUrl(coverPath);
 
                 coverInput.addEventListener('change', async function(event) {
                     const file = event.target.files[0];
@@ -502,13 +487,21 @@ $authors = array_map(function ($type) {
 
                 deleteButton.onclick = () => wrapper.remove();
 
+                // More input field
                 const inputField = document.createElement("input");
                 inputField.type = "file";
                 inputField.name = "more_pic[]";
-                inputField.className = "hidden";
+                inputField.classList.add("hidden");
                 inputField.files = fileInput;
 
-                wrapper.append(image, overlay, deleteButton, inputField);
+                // More inout field exits
+                const inputExist = document.createElement("input");
+                inputExist.type = "file";
+                inputExist.name = "more_pic_exist[]";
+                inputExist.classList.add("hidden");
+                inputExist.files = fileInput;
+
+                wrapper.append(image, overlay, deleteButton, inputField, inputExist);
 
                 return wrapper;
             }

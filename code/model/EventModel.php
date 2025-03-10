@@ -16,7 +16,8 @@ use Exception;
 class Event
 {
     private $connection;
-    private $requiredFields = ['title', 'description', 'type', 'start', 'end', 'location', 'cover', 'more_pic[]'];
+    // private $requiredFields = ['title', 'description', 'type', 'start', 'end', 'location', 'cover', 'more_pic[]'];
+    private $requiredFields = ['title', 'description', 'type', 'start', 'end', 'location'];
 
     public function __construct($connection)
     {
@@ -227,13 +228,127 @@ class Event
                 if (empty($data[$field])) {
                     return [
                         "status" => 400,
-                        "message" => "Missing required field: $field"
+                        "message" => "กรุณาเช็คข้อมูลให้ถูกต้องก่อนส่งข้อมูล"
                     ];
                 }
             }
 
-            var_dump($data);
-            
+            $isUploadedImage = !false;
+
+            // removeFile(fileName: $_FILES['cover_exist']['name'], saveDir: $uploadDir);
+
+            if (isset($_FILES['cover']) && $_FILES['cover']['error'] === UPLOAD_ERR_OK) {
+                if (isset($_FILES['cover_exist']) && $_FILES['cover']['name'] !== $_FILES['cover_exist']['name']) {
+                    if (isset($_FILES['cover_exist']['name'])) {
+                        removeFile(fileName: $_FILES['cover_exist']['name'], saveDir: $uploadDir);
+                    }
+                    $coverImage = uploadFile($_FILES['cover'], $uploadDir);
+                    unset($_FILES['cover']);
+                    unset($_FILES['cover_exist']);
+                } else {
+                    $coverImage = uploadFile($_FILES['cover'], $uploadDir);
+                }
+                $isUploadedImage = true;
+            } else {
+                return [
+                    "status" => 404,
+                    "message" => "Error: Banner image not found"
+                ];
+            }
+
+            // if (isset($_FILES['more_pic']) && isset($_FILES['more_pic_exist'])) {
+            //     foreach ($_FILES['more_pic_exist']['name'] as $existingImage) {
+            //         if (!in_array($existingImage, $_FILES['more_pic']['name'])) {
+            //             removeFile(fileName: $existingImage, saveDir: $uploadDir);
+            //         }
+            //     }
+
+            //     foreach ($_FILES['more_pic']['name'] as $index => $filename) {
+            //         if (in_array($filename, $_FILES['more_pic_exist']['name'])) {
+            //             $morePics[] = $filename;
+            //         } else {
+            //             $tempFile = [
+            //                 'name' => $_FILES['more_pic']['name'][$index],
+            //                 'type' => $_FILES['more_pic']['type'][$index],
+            //                 'tmp_name' => $_FILES['more_pic']['tmp_name'][$index],
+            //                 'error' => $_FILES['more_pic']['error'][$index],
+            //                 'size' => $_FILES['more_pic']['size'][$index]
+            //             ];
+
+            //             $uploadedFile = uploadFile($tempFile, $uploadDir);
+
+            //             if ($uploadedFile) {
+            //                 $morePics[] = $uploadedFile;
+            //             }
+            //         }
+            //     }
+            //     $isUploadedImage = true;
+            // }
+
+            if ($isUploadedImage === false) {
+                return [
+                    "status" => 500,
+                    "message" => "เกิดข้อผิดพลาดระหว่างอัพโหลดรูปภาพกิจกรรม"
+                ];
+            }
+
+            $more_pic = json_encode($morePics);
+
+            $now = new DateTime();
+            $lastCols = $this->connection->prepare("SELECT id FROM Event ORDER BY id DESC LIMIT 1");
+            $lastCols->execute();
+            $getCols = $lastCols->fetchColumn();
+
+            $newValue = ($getCols !== false) ? intval($getCols) + 1 : 1;
+            $formattedValue = str_pad($newValue, 7, "0", STR_PAD_LEFT);
+            $eventId = "AG-" . $now->format('Y') . $formattedValue . uniqid("_event-" . getRandomId(8));
+
+            $userId = $_SESSION['user']['userId'];
+
+            $venue = isset($data['venue']) && $data['venue'] !== '' ? $data['venue'] : '0';
+            $maximum = isset($data['maximum']) && is_numeric($data['maximum']) ? intval($data['maximum']) : -1;
+
+            $statement = $this->connection->prepare("
+                UPDATE Event 
+                SET organizeId = :organizeId,
+                    cover = :cover,
+                    morePics = :morePics,
+                    title = :title,
+                    description = :description,
+                    venue = :venue,
+                    maximum = :maximum,
+                    type = :type,
+                    link = :link,
+                    start = :start,
+                    end = :end,
+                    location = :location
+                WHERE eventId = :eventId
+            ");
+
+            $statement->bindParam(':eventId', $eventId);
+            $statement->bindParam(':organizeId', $userId);
+            $statement->bindParam(':cover', $coverImage);
+            $statement->bindParam(':morePics', $more_pic);
+            $statement->bindParam(':title', $data['title']);
+            $statement->bindParam(':description', $data['description']);
+            $statement->bindParam(':venue', $venue);
+            $statement->bindParam(':maximum', $maximum);
+            $statement->bindParam(':type', $data['type']);
+            $statement->bindParam(':link', $data['link']);
+            $statement->bindParam(':start', $data['start']);
+            $statement->bindParam(':end', $data['end']);
+            $statement->bindParam(':location', $data['location']);
+
+            if (!$statement->execute()) {
+                $this->connection->rollBack();
+                return [
+                    "status" => 500,
+                    "message" => "เกิดข้อผิดพลาดระหว่างสร้างกิจกรรม"
+                ];
+            }
+
+            $this->connection->commit();
+
             return [
                 "status" => 201,
                 "message" => "Update event complete!",

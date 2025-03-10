@@ -223,7 +223,7 @@ $authors = array_map(function ($type) {
                 </div>
 
                 <div class="flex w-full justify-start items-start gap-5 flex-col md:flex-row">
-                    <a href="../" id="form-cancel" class="w-full md:w-1/3 btn-danger">Cancel</a>
+                    <a href="../" id="form-cancel" class="w-full md:w-1/3 btn-danger" onclick="window.history.back()">Cancel</a>
                     <button type="button" id="form-submit" class="w-full btn-secondary">Create Event</button>
                 </div>
 

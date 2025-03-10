@@ -84,11 +84,14 @@ const fetchBlobFile = async (blobUrl, fileName) => {
 ";
 }
 
-function removeFile($fileName, $saveDir) {
+function removeFile($fileName, $saveDir)
+{
     $filePath = rtrim($saveDir, '/') . '/' . $fileName;
+
+    print_r("Remove file work!");
+
     if (file_exists($filePath)) {
         return unlink($filePath);
-        
     }
 
     return false;
