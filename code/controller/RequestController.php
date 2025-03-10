@@ -1,5 +1,4 @@
 <?php
-// Get Request
 
 namespace FinalProject\Controller;
 
