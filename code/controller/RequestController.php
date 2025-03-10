@@ -123,19 +123,19 @@ class RequestController
                 $verifyAccount = $this->user->isUserProfileVerify($data['userId']);
 
                 if ($verifyAccount['status'] !== 200) {
-                    return response(status: $verifyAccount['status'], message: $verifyAccount['message'], redirect: '../?action=event.attendee&id=' . $data['eventId']);
+                    return response(status: $verifyAccount['status'], message: $verifyAccount['message'], redirect: '../?action=event.attendee&id=' . $data['eventId'] . '&joined=' . $data['joined']);
                 }
 
                 $eventObj = $this->event->getEventById($data['eventId']);
 
                 if ($eventObj['organizeId'] === $data['userId']) {
-                    return response(status: 409, message: "Organizer can't join their own event", redirect: '../?action=event.attendee&id=' . $data['eventId']);
+                    return response(status: 409, message: "Organizer can't join their own event", redirect: '../?action=event.attendee&id=' . $data['eventId'] . '&joined=' . $data['joined']);
                 }
 
                 // เช็คคนเต็ม
 
                 $result = $this->reg->registerEvent(userId: $data['userId'], eventId: $data['eventId']);
-                return response(status: $result['status'], message: "Registration successful", data: $result['data'], redirect: '../?action=event.attendee&id=' . $data['eventId']);
+                return response(status: $result['status'], message: "Registration successful", data: $result['data'], redirect: '../?action=event.attendee&id=' . $data['eventId'] . '&joined=' . $data['joined']);
 
             case 'delete':
                 $result = $this->event->deleteEventById(userId: $data['userId'], eventId: $data['eventId']);

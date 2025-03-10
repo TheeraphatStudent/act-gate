@@ -97,16 +97,14 @@ $navigate = new Breadcrumb();
 
                             <!-- Action Buttons -->
                             <div class="flex flex-row justify-start items-center gap-2.5 w-full">
-                                <!-- Cancel/Delete Button -->
-                                <div class="flex justify-center items-center p-2 rounded-lg bg-light-red">
+                                <!-- <div class="flex justify-center items-center p-2 rounded-lg bg-light-red">
                                     <img
                                         src="public/icons/delete.svg"
                                         alt="Cancel"
                                         class="w-5 h-5" />
-                                </div>
+                                </div> -->
 
-                                <!-- Ticket Button -->
-                                <div class="flex justify-between items-center px-4 py-2 rounded-lg bg-primary flex-grow">
+                                <div class="flex justify-between items-center px-4 py-2 rounded-lg bg-primary hover:cursor-pointer hover:bg-dark-primary flex-grow">
                                     <div class="flex items-center gap-2">
                                         <img
                                             class="w-6 h-6"
@@ -130,7 +128,23 @@ $navigate = new Breadcrumb();
             </div>
         </div>
 
+        <div id="editProfileModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden mt-24">
+            <div class="bg-white rounded-xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-semibold font-kanit text-dark-secondary">บัตรเข้างาน</h3>
+                    <button type="button" id="closeModalBtn" class="text-gray-500 hover:text-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
 
+                <!-- Edit User -->
+                <form id="editProfileForm" class="space-y-6" action="../?action=request&on=user&form=update" method="post">
+
+                </form>
+            </div>
+        </div>
 
     </div>
     <!-- </div> -->
