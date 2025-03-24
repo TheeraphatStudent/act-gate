@@ -387,19 +387,49 @@ class Event
     public function searchEvent($title, $dateStart, $dateEnd)
     {
         try {
-            $query = "SELECT * FROM Event WHERE 1";
+            $query = "SELECT
+            e.eventId,
+            e.cover,
+            e.title,
+            e.maximum,
+            e.type,
+            e.start,
+            e.end,
+            e.venue,
+            e.organizeId,
+            u.name AS organizeName,
+            COUNT(CASE WHEN a.status = 'accepted' THEN a.regId END) AS joined
+        FROM Event e
+        LEFT JOIN Registration r ON e.eventId = r.eventId
+        LEFT JOIN Attendance a ON r.regId = a.regId
+        JOIN User u ON e.organizeId = u.userId
+        WHERE 1=1
+        ";
+
             $params = [];
 
             if (!empty($title)) {
-                $query .= " AND title LIKE :title";
+                $query .= " AND e.title LIKE :title";
                 $params[':title'] = "%$title%";
             }
 
             if (!empty($dateStart) && !empty($dateEnd)) {
-                $query .= " AND (DATE(start) BETWEEN :dateStart AND :dateEnd OR DATE(end) BETWEEN :dateStart AND :dateEnd)";
+                $query .= " AND DATE(e.start) BETWEEN :dateStart AND :dateEnd";
                 $params[':dateStart'] = $dateStart;
                 $params[':dateEnd'] = $dateEnd;
             }
+
+            $query .= " GROUP BY 
+            e.eventId, 
+            e.cover, 
+            e.title, 
+            e.maximum, 
+            e.type, 
+            e.start, 
+            e.end,
+            e.venue,
+            e.organizeId, 
+            u.name;";
 
             $stmt = $this->connection->prepare($query);
             $stmt->execute($params);
@@ -493,7 +523,8 @@ class Event
 
     public function getRegistrationEventByUserId() {}
 
-    public function deleteEventById($userId, $eventId) {
+    public function deleteEventById($userId, $eventId)
+    {
         try {
             $this->connection->beginTransaction();
 
@@ -528,7 +559,6 @@ class Event
                 "status" => 200,
                 "message" => "กิจกรรมถูกลบแล้ว"
             ];
-
         } catch (PDOException $e) {
             $this->connection->rollBack();
             return [

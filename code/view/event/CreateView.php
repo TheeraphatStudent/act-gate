@@ -117,17 +117,6 @@ $authors = array_map(function ($type) {
                             </select>
 
                         </div>
-                        <div class="flex flex-col w-full gap-2.5">
-                            <div
-                                class="form-title">
-                                Link
-                            </div>
-                            <input
-                                class="input-field" name="link" type="url"
-                                placeholder="https://example.com"
-                                pattern="https?:\/\/.*">
-
-                        </div>
                     </div>
 
                     <div class="flex flex-col w-full justify-start items-start gap-2.5" id="datetime-container">
