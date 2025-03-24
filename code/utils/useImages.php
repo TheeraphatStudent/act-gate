@@ -81,6 +81,28 @@ const fetchBlobFile = async (blobUrl, fileName) => {
 
     return dataTransfer.files;
 };
+
+const createJpegObject = async (base64) => {
+    return new Promise((resolve, reject) => {
+        var img = new Image();
+        img.src = base64;
+        img.onload = function() {
+            var canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            var ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = 'white';  // Fill background for transparency
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.drawImage(img, 0, 0);
+            var jpegBase64 = canvas.toDataURL('image/jpeg', 0.9);
+            resolve(jpegBase64);
+        };
+
+        img.onerror = (err) => reject(err);
+    });
+};
 ";
 }
 

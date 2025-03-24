@@ -24,7 +24,6 @@ class Navbar extends Component
                         </a>
                     </div>
 
-                    <!-- Desktop Menu -->
                     <div class="md:block hidden">
                         <div class="flex h-full gap-4 items-baseline *:text-black">
                             <?php if ($this->isLogin) : ?>
@@ -49,7 +48,6 @@ class Navbar extends Component
                         </div>
                     </div>
 
-                    <!-- Mobile Menu Button -->
                     <div class="md:hidden block">
                         <button id="menuToggleBtn" class="flex items-center font-semibold h-14 px-4 rounded-xl transition-opacity ">
                             <img src="public/icons/drawer.png" alt="">
@@ -59,7 +57,6 @@ class Navbar extends Component
             </div>
         </nav>
 
-        <!-- Mobile Menu -->
         <div id="mobileMenu" class="fixed inset-0 bg-white w-screen h-fit p-5 pt-[8rem] hidden">
             <div class="flex flex-col h-full items-center gap-4 *:text-black">
                 <?php if ($this->isLogin) : ?>

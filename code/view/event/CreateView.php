@@ -83,7 +83,7 @@ $authors = array_map(function ($type) {
                         <div class="flex flex-col w-full gap-2.5">
                             <div
                                 class="form-title">
-                                Venue&nbsp;
+                                Fee&nbsp;
                                 <!-- <span class="form-required">*</span> -->
                             </div>
                             <input
@@ -94,10 +94,10 @@ $authors = array_map(function ($type) {
                             <div
                                 class="form-title">
                                 Maximum&nbsp;
-                                <!-- <span class="form-required">*</span> -->
+                                <span class="form-required">*</span>
                             </div>
                             <input
-                                class="input-field" type="number" name="maximum" placeholder="Enter maximum">
+                                required class="input-field" type="number" name="maximum" placeholder="Enter maximum">
 
                         </div>
                     </div>
@@ -171,7 +171,7 @@ $authors = array_map(function ($type) {
                         <span id="upload_text" class="underline cursor-pointer font-medium text-base text-white group-hover:text-white z-10 relative transition-colors duration-300">
                             Upload Cover
                         </span>
-                        <input required type="file" accept=".jpg, .jpeg, .webp" id="cover_img" name="cover" class="hidden">
+                        <input required type="file" accept="image/*" id="cover_img" name="cover" class="hidden">
                     </label>
                 </div>
 
@@ -195,7 +195,7 @@ $authors = array_map(function ($type) {
                                         Add Image
                                     </div>
                                 </div>
-                                <input type="file" id="image-uploads" accept=".png, .jpg, .jpeg" class="hidden" multiple>
+                                <input type="file" id="image-uploads" accept="image/*" class="hidden" multiple>
                             </label>
                         </div>
                     </div>
@@ -339,7 +339,11 @@ $authors = array_map(function ($type) {
                         reader.onload = async function(e) {
                             // console.log(e.target.result);
                             const value = e.target.result;
-                            const blobUrl = byte64toBlobUrl(value, 'image/jpeg', 512);
+                            // console.log(value)
+                            const imgObj = await createJpegObject(value);
+                            // console.log(imgObj)
+
+                            const blobUrl = byte64toBlobUrl(imgObj, 'image/jpeg', 512);
 
                             const coverImg = document.getElementById('cover_label');
 
@@ -376,9 +380,10 @@ $authors = array_map(function ($type) {
                             const file = files[i];
                             const reader = new FileReader();
 
-                            reader.onload = function(e) {
+                            reader.onload = async function(e) {
                                 const imageData = e.target.result;
-                                const blobUrl = byte64toBlobUrl(imageData, 'image/jpeg', 512);
+                                const imgObj = await createJpegObject(imageData);
+                                const blobUrl = byte64toBlobUrl(imgObj, 'image/jpeg', 512);
 
                                 // uploadedImages.push(blobUrl);
                                 // morePicInput.value = uploadedImages
