@@ -165,6 +165,7 @@ class Event
                 e.start,
                 e.end,
                 e.venue,
+                e.location,
                 e.organizeId,
                 u.name AS organizeName,
                 COUNT(CASE WHEN a.status = 'accepted' THEN a.regId END) AS joined
@@ -181,6 +182,7 @@ class Event
                 e.start, 
                 e.end,
                 e.venue,
+                e.location,
                 e.organizeId, 
                 u.name;
             "

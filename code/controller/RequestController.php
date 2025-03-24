@@ -219,7 +219,7 @@ class RequestController
                         status: $authorId['status'],
                         message: $authorId['message'],
                         data: [null],
-                        redirect: '../?action=event.checked-in&id=' . $data['eventId']
+                        redirect: '../?action=event.manage-attend&id=' . $data['eventId']
                     );
                 }
 
@@ -228,14 +228,14 @@ class RequestController
                 return response(
                     status: $result['status'],
                     message: $result['message'],
-                    redirect: '../?action=event.checked-in&id=' . $data['eventId']
+                    redirect: '../?action=event.manage-attend&id=' . $data['eventId']
                 );
 
             default:
                 return response(
                     status: 404,
                     message: "Something went wrong!",
-                    redirect: '../?action=event.checked-in&id=' . $data['eventId']
+                    redirect: '../?action=event.manage-attend&id=' . $data['eventId']
                 );
         }
     }

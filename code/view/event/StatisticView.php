@@ -10,7 +10,7 @@ use FinalProject\Components\Tags;
 $navigate = new Breadcrumb();
 
 $navigate->setPath(
-    data: ['Dashboard', 'รายงานกิจกรรม', $_GET['id'] ?? "???"],
+    data: ['Dashboard', 'ภาพรวมกิจกรรม', $_GET['id'] ?? "???"],
     prevPath: '?action=event.manage'
 );
 

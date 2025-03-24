@@ -5,6 +5,7 @@ namespace FinalProject\View\Event;
 require_once('components/map/map.php');
 require_once('components/texteditor/texteditor.php');
 require_once('utils/useImages.php');
+require_once('utils/useForm.php');
 
 use FinalProject\Components\Map;
 use FinalProject\Components\TextEditor;
@@ -211,20 +212,40 @@ $authors = array_map(function ($type) {
                     <?php $textEditor->render() ?>
                 </div>
 
-                <div class="flex w-full justify-start items-start gap-5 flex-col md:flex-row">
+                <div class="flex w-full justify-start items-start gap-5 flex-col-reverse md:flex-row">
                     <a href="../" id="form-cancel" class="w-full md:w-1/3 btn-danger" onclick="window.history.back()">Cancel</a>
                     <button type="button" id="form-submit" class="w-full btn-secondary">Create Event</button>
                 </div>
 
         </form>
-
     </div>
 
     <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 
+    <script>
+        <?= saveFormScript() ?>
+        <?= loadFormScript() ?>
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('form-content');
+            let saveTimeout;
+
+            loadForm('create');
+
+            form.addEventListener('input', () => {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    saveForm('create');
+                }, 3000);
+            });
+        });
+    </script>
+
     <!-- Validate Form -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        <?= clearFormScript() ?>
+
         document.addEventListener("DOMContentLoaded", () => {
             const form = document.getElementById("form-content");
 
@@ -269,6 +290,7 @@ $authors = array_map(function ($type) {
                             text: "สร้างกิจกรรมเสร็จสิ้น!",
                         });
 
+                        clearForm('create');
                         window.location.href = `${result?.redirect}`
 
                     } else {

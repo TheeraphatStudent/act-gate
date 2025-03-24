@@ -17,7 +17,7 @@
             <div class="overflow-x-auto">
                 <table class="w-full table-auto shadow-lg rounded-lg overflow-hidden">
                     <thead>
-                        <tr class="bg-gray-100 text-gray-600 uppercase text-xs tracking-wider">
+                        <tr class="bg-white text-gray-600 uppercase text-xs tracking-wider">
                             <th class="py-3 px-4 text-left">Event ID</th>
                             <th class="py-3 px-4 text-left">Title</th>
                             <th class="py-3 px-4 text-left">Maximum</th>
@@ -60,13 +60,33 @@
                                                         </g>
                                                     </g>
                                                 </svg>
+                                                <!-- <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#F4B028">
+                                                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                                    <g id="SVGRepo_iconCarrier">
+                                                        <g>
+                                                            <path fill="none" d="M0 0h24v24H0z"></path>
+                                                            <path d="M2 22a8 8 0 1 1 16 0H2zm8-9c-3.315 0-6-2.685-6-6s2.685-6 6-6 6 2.685 6 6-2.685 6-6 6zm7.363 2.233A7.505 7.505 0 0 1 22.983 22H20c0-2.61-1-4.986-2.637-6.767zm-2.023-2.276A7.98 7.98 0 0 0 18 7a7.964 7.964 0 0 0-1.015-3.903A5 5 0 0 1 21 8a4.999 4.999 0 0 1-5.66 4.957z"></path>
+                                                        </g>
+                                                    </g>
+                                                </svg> -->
                                             </a>
-                                            <a href="../?action=event.checked-in&id=<?= $item['eventId'] ?>" class="p-1.5 rounded-full hover:bg-light-green">
-                                                <svg viewBox="0 0 24 24" height="20px" width="20px" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <a href="../?action=event.manage-attend&id=<?= $item['eventId'] ?>" class="p-1.5 rounded-full hover:bg-light-green">
+                                                <!-- <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                                                     <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
                                                     <g id="SVGRepo_iconCarrier">
                                                         <path d="M14 19.2857L15.8 21L20 17M4 21C4 17.134 7.13401 14 11 14C12.4872 14 13.8662 14.4638 15 15.2547M15 7C15 9.20914 13.2091 11 11 11C8.79086 11 7 9.20914 7 7C7 4.79086 8.79086 3 11 3C13.2091 3 15 4.79086 15 7Z" stroke="#226E6A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                                    </g>
+                                                </svg> -->
+                                                <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#1B8600">
+                                                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                                    <g id="SVGRepo_iconCarrier">
+                                                        <g>
+                                                            <path fill="none" d="M0 0h24v24H0z"></path>
+                                                            <path d="M2 22a8 8 0 1 1 16 0H2zm8-9c-3.315 0-6-2.685-6-6s2.685-6 6-6 6 2.685 6 6-2.685 6-6 6zm7.363 2.233A7.505 7.505 0 0 1 22.983 22H20c0-2.61-1-4.986-2.637-6.767zm-2.023-2.276A7.98 7.98 0 0 0 18 7a7.964 7.964 0 0 0-1.015-3.903A5 5 0 0 1 21 8a4.999 4.999 0 0 1-5.66 4.957z"></path>
+                                                        </g>
                                                     </g>
                                                 </svg>
                                             </a>
@@ -91,29 +111,29 @@
                                                             formData.append('userId', `<?= $_SESSION['user']['userId'] ?>`);
 
                                                             fetch(`../?action=request&on=event&form=delete`, {
-                                                                method: 'POST',
-                                                                body: formData
-                                                            })
-                                                            .then(response => response.json())
-                                                            .then(data => {
-                                                                console.log(data)
+                                                                    method: 'POST',
+                                                                    body: formData
+                                                                })
+                                                                .then(response => response.json())
+                                                                .then(data => {
+                                                                    console.log(data)
 
-                                                                if (data.status === 200) {
-                                                                    Swal.fire(
-                                                                        'สำเร็จ',
-                                                                        'กิจกรรมถูกลบเรียบร้อย',
-                                                                        'success'
-                                                                    ).then(() => {
-                                                                        location.reload();
-                                                                    });
-                                                                } else {
-                                                                    Swal.fire(
-                                                                        'เกิดข้อผิดพลาด',
-                                                                        data.message,
-                                                                        'error'
-                                                                    );
-                                                                }
-                                                            });
+                                                                    if (data.status === 200) {
+                                                                        Swal.fire(
+                                                                            'สำเร็จ',
+                                                                            'กิจกรรมถูกลบเรียบร้อย',
+                                                                            'success'
+                                                                        ).then(() => {
+                                                                            location.reload();
+                                                                        });
+                                                                    } else {
+                                                                        Swal.fire(
+                                                                            'เกิดข้อผิดพลาด',
+                                                                            data.message,
+                                                                            'error'
+                                                                        );
+                                                                    }
+                                                                });
                                                         }
                                                     });
                                                 }

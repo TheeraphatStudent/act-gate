@@ -129,7 +129,7 @@ switch ($action) {
         header('Location: ' . $response['redirect']);
         exit;
         break;
-        // ================= Page Content =================
+    // ================= Page Content =================
 
     case 'index':
         $controller->index();
@@ -143,7 +143,7 @@ switch ($action) {
 
     case 'event.attendee':
     case 'event.create':
-    case 'event.checked-in':
+    case 'event.manage-attend':
     case 'event.manage':
     case 'event.edit':
     case 'event.statistic':

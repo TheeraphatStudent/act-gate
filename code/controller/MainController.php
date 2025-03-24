@@ -91,7 +91,8 @@ class MainController
 
         if (in_array($event, EventUtils::ACCEPT_EVENT)) {
             switch ($event) {
-                case 'checked-in':
+                case 'manage-attend':
+                    $allUserReg = $regModel->getUserRegisterByEventAndUserId(userId: $userId, eventId: $eventId);
                     $allUserAttendOnEvent = $attModel->getUserWasAcceptRegOnEventById(userId: $userId, eventId: $eventId);
 
                     require_once("./view/event/CheckedInView.php");
@@ -125,7 +126,7 @@ class MainController
                     break;
 
                 case 'statistic':
-                    $allUserReg = $regModel->getUserRegisterByEventAndUserId(userId: $userId, eventId: $eventId);
+                    // $allUserReg = $regModel->getUserRegisterByEventAndUserId(userId: $userId, eventId: $eventId);
 
                     // require_once("./view/event/statistic.php");
                     require_once("./view/event/StatisticView.php");

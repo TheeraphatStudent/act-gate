@@ -8,7 +8,6 @@ require_once('utils/useImages.php');
 require_once('components/breadcrumb.php');
 
 use FinalProject\Components\Breadcrumb;
-use FinalProject\Components\Map;
 use FinalProject\Components\TextEditor;
 
 $textEditor = new TextEditor();

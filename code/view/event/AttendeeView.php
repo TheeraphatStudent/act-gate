@@ -173,8 +173,8 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
             <div class="flex flex-col justify-start items-start gap-5 w-full h-fit lg:w-1/2 relative">
                 <h1 class="text-white font-semibold">เวลาจัดงาน</h1>
                 <div class="flex flex-col font-kanit text-base w-full h-full gap-2 whitespace-nowrap text-light-green text-opacity-100 leading-none font-normal">
-                    <span>เริ่มงาน: <?= $eventObj['start'] ?></span>
-                    <span>สิ้นสุด: <?= $eventObj['end'] ?></span>
+                    <span>เริ่มงาน: <?= date('d M Y, H:i', strtotime($eventObj['start'])) ?></span>
+                    <span>สิ้นสุด: <?= date('d M Y, H:i', strtotime($eventObj['end'])) ?></span>
                 </div>
             </div>
 
