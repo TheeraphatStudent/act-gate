@@ -3,17 +3,25 @@
 function saveFormScript()
 {
     return '
-    function saveForm(type) {
+    async function saveForm(type) {
         let form = document.getElementById("form-content");
         let formData = new FormData(form);
         let data = {};
+        let isSaved = true;
 
         formData.forEach((value, key) => {
-            if (key === "cover" || key === "more-pic" || key === "description") return;
-            data[key] = value;
+            if (["cover", "more_pic[]", "description"].includes(key)) {
+                isSaved = false;
+            } else {
+                data[key] = value;
+            }
         });
 
-        localStorage.setItem(type + "_formData", JSON.stringify(data));
+        if (isSaved) {
+            localStorage.setItem(type + "_formData", JSON.stringify(data));
+        }
+
+        return isSaved;
     }
     ';
 }
@@ -28,7 +36,7 @@ function loadFormScript()
             let data = JSON.parse(savedData);
 
             for (let key in data) {
-             if (key === "cover" || key === "more-pic" || key === "description") continue;
+             if (["cover", "more_pic[]", "description"].includes(key)) continue;
 
                 let element = form.querySelector("[name=\'" + key + "\']");
                 if (element) {

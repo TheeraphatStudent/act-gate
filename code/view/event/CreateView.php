@@ -221,10 +221,23 @@ $authors = array_map(function ($type) {
     </div>
 
     <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         <?= saveFormScript() ?>
         <?= loadFormScript() ?>
+
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            iconColor: 'white',
+            customClass: {
+                popup: 'colored-toast',
+            },
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+        })
 
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('form-content');
@@ -234,15 +247,24 @@ $authors = array_map(function ($type) {
 
             form.addEventListener('input', () => {
                 clearTimeout(saveTimeout);
-                saveTimeout = setTimeout(() => {
-                    saveForm('create');
+                saveTimeout = setTimeout(async() => {
+                    await saveForm('create').then(async (isSaved) => {
+                        if (isSaved) {
+                            await Toast.fire({
+                                icon: 'success',
+                                title: 'บันทึกข้อมููลแล้ว!',
+                            })
+                        }
+
+                    });
+
+
                 }, 3000);
             });
         });
     </script>
 
     <!-- Validate Form -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         <?= clearFormScript() ?>
 
@@ -275,31 +297,46 @@ $authors = array_map(function ($type) {
 
                 try {
                     const formData = new FormData(form);
-                    const response = await fetch(form.action, {
-                        method: form.method,
-                        body: formData
-                    });
 
-                    const result = await response.json();
-                    // console.log(result);
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'ยืนยันการสร้างกิจกรรม',
+                        text: "หากคุณสร้างกิจกรรม, คุณสามารถแก้ไขย้อนหลังได้",
+                        showDenyButton: true,
+                        confirmButtonText: 'สร้างทันที',
+                        denyButtonText: 'ยังก่อน'
 
-                    if (response.ok) {
-                        await Swal.fire({
-                            icon: "success",
-                            title: "สำเร็จ",
-                            text: "สร้างกิจกรรมเสร็จสิ้น!",
-                        });
+                    }).then(async (action) => {
+                        if (action.isConfirmed) {
+                            const response = await fetch(form.action, {
+                                method: form.method,
+                                body: formData
+                            });
 
-                        clearForm('create');
-                        window.location.href = `${result?.redirect}`
+                            const result = await response.json();
+                            // console.log(result);
 
-                    } else {
-                        Swal.fire({
-                            icon: "error",
-                            title: "เกิดข้อผิดพลาด",
-                            text: "เกิดข้อผิดพลาดในการส่งข้อมูล, ลองใหม่อีกครั้ง"
-                        });
-                    }
+                            if (response.ok) {
+                                await Swal.fire({
+                                    icon: "success",
+                                    title: "สำเร็จ",
+                                    text: "สร้างกิจกรรมเสร็จสิ้น!",
+                                });
+
+                                clearForm('create');
+                                window.location.href = `${result?.redirect}`
+
+                            } else {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "เกิดข้อผิดพลาด",
+                                    text: "เกิดข้อผิดพลาดในการส่งข้อมูล, ลองใหม่อีกครั้ง"
+                                });
+                            }
+
+                        }
+
+                    })
                 } catch (error) {
                     console.error(error);
                     console.error(error.message);

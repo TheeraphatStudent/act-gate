@@ -5,7 +5,7 @@
 function uploadFile($file, $uploadDir)
 {
     if (!empty($file)) {
-        $fileName = uniqid() . '_' . basename($file['name']);
+        $fileName = uniqid() . '_' . basename(trim($file['name']));
         $targetPath = rtrim($uploadDir, '/') . '/' . $fileName;
 
         // echo '<br>';
