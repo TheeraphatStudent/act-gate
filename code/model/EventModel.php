@@ -28,6 +28,9 @@ class Event
     public function createEvent($data = [])
     {
         try {
+
+            
+
             $this->connection->beginTransaction();
 
             $uploadDir = '/var/www/html/public/images/uploads/';

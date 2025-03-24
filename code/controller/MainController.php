@@ -72,7 +72,7 @@ class MainController
 
             case 'logout':
                 unset($_SESSION['user']);
-                header("Location: ../?action=logged-out");
+                header("Location: ../");
                 exit;
         }
     }

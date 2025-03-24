@@ -129,9 +129,10 @@ $calendar = new SchedulerCalendar();
                                     </div>
                                 </div>
                                 <div class="flex flex-col gap-1 font-kanit text-sm w-full whitespace-nowrap text-primary leading-none font-normal">
-                                    <span>เริ่มงาน: <?= $item['start'] ?></span>
-                                    <span>สิ้นสุด: <?= $item['end'] ?></span>
+                                    <span>เริ่มงาน: <?= date('d M Y, H:i', strtotime($item['start'])) ?></span>
+                                    <span>สิ้นสุด: <?= date('d M Y, H:i', strtotime($item['end'])) ?></span>
                                 </div>
+
                             </div>
                         </div>
                         <div class="flex flex-row justify-center items-center gap-2.5 w-full h-10">
