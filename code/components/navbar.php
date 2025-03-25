@@ -27,9 +27,9 @@ class Navbar extends Component
                     <div class="md:block hidden">
                         <div class="flex h-full gap-4 items-baseline *:text-black">
                             <?php if ($this->isLogin) : ?>
-                                <a href='../?action=event.create' class='nav-item hover:text-gray-600 text-sm rounded-md font-medium'>Create event</a>
-                                <a href='../?action=event.manage' class='nav-item hover:text-gray-600 text-sm rounded-md font-medium'>Manage event</a>
-                                <a href='../?action=mail' class='nav-item hover:text-gray-600 text-sm rounded-md font-medium'>History</a>
+                                <a href='../?action=event.create' class='nav-item hover:text-gray-600 text-sm rounded-md font-medium'>สร้างกิจกรรม</a>
+                                <a href='../?action=event.manage' class='nav-item hover:text-gray-600 text-sm rounded-md font-medium'>จัดการกิจกรรม</a>
+                                <a href='../?action=mail' class='nav-item hover:text-gray-600 text-sm rounded-md font-medium'>ประวัติการเข้าร่วม</a>
                                 <div class="flex gap-2 items-center border-l-2 border-dark-primary">
                                     <a href="../?action=profile" class="ml-4 hover:text-gray-600 text-sm font-medium flex items-center no-underline">
                                         <div class="w-[56px] h-[56px] flex items-center justify-center rounded-full bg-primary text-white text-xl font-bold">
@@ -67,9 +67,9 @@ class Navbar extends Component
                             </div>
                         </a>
                     </div>
-                    <a href='../?action=event.create' class='nav-item hover:text-gray-600 text-sm rounded-md font-medium'>Create event</a>
-                    <a href='../?action=event.manage' class='nav-item hover:text-gray-600 text-sm rounded-md font-medium'>Manage event</a>
-                    <a href='../?action=mail' class='nav-item hover:text-gray-600 text-sm rounded-md font-medium'>History</a>
+                    <a href='../?action=event.create' class='nav-item hover:text-gray-600 text-sm rounded-md font-medium'>สร้างกิจกรรม</a>
+                    <a href='../?action=event.manage' class='nav-item hover:text-gray-600 text-sm rounded-md font-medium'>จัดการกิจกรรม</a>
+                    <a href='../?action=mail' class='nav-item hover:text-gray-600 text-sm rounded-md font-medium'>ประวัติการเข้าร่วม</a>
                 <?php else : ?>
                     <a href='..?action=register' class='group btn-primary signin-btn w-[160px]'>
                         <span class='group-hover:text-white'>สร้างบัญชี</span>
