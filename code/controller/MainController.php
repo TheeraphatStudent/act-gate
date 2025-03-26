@@ -105,7 +105,8 @@ class MainController
                     break;
 
                 case 'attendee':
-                    $regObj = $regModel->getRegisterById(userId: $userId, eventId: $eventId);
+
+                    $regObj = ($regModel->getRegisterById(userId: $userId, eventId: $eventId))['data'];
                     $eventObj = $eventModel->getEventById($eventId);
                     $organizeInfo = ($userModel->getUserByUserId($eventObj['organizeId']))['user'];
 
@@ -144,6 +145,7 @@ class MainController
         }
     }
 
+    // ใช้เพื่อดึงข้อมูล
     public function request(array $target, array $data = [])
     {
         // print_r($target);

@@ -115,7 +115,7 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                                         ]
                                     ];
 
-                                    $status = (isset($regObj['data']['status']) ? trim($regObj['data']['status']) : null) ?? 'default';
+                                    $status = (isset($regObj['status']) ? trim($regObj['status']) : null) ?? 'default';
                                     $status = in_array($status, Register::REGISTER_STATUS) ? $status : 'default';
 
                                     // print_r($eventId);
@@ -133,7 +133,7 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                                         <button type='button' class='btn-gray' id=''><span>หมดเวลาเข้าร่วม</span></button>
                                     <?php
                                     } else {
-                                        if (!isset($regObj['data']['status']) && $_GET['joined'] >= $eventObj['maximum']) {
+                                        if (!isset($regObj['status']) && $_GET['joined'] >= $eventObj['maximum']) {
                                             foreach ($buttons['full'] as $button) {
                                                 echo "<button type='button' class='{$button['class']}' id='{$button['id']}'><span>{$button['label']}</span></button>";
                                             }
@@ -144,7 +144,7 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                                         }
                                     }
 
-                                    unset($regObj['data']);
+                                    // unset($regObj);
                                     ?>
 
                                 <?php else : ?>
@@ -222,7 +222,7 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
         </section>
     </div>
 
-    <div id="ticketModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] mt-24">
+    <div id="ticketModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] mt-24 hidden">
         <div class="bg-white shadow-2xl rounded-xl w-full max-w-[350px] p-5 h-fit *:w-full">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-kanit text-center w-full text-dark-secondary">บัตรเข้างานของคุณ</h3>
@@ -234,7 +234,7 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
             </div>
 
             <!-- Ticket -->
-            <div id="ticket-canvas" class="h-[400px] rounded-md overflow-y-auto">
+            <div id="ticket-canvas" class="h-[400px] rounded-md overflow-y-auto hover:scale-105">
                 <section class="flex relative flex-col p-5 w-full">
                     <img
                         src="public/images/tickets.svg"
@@ -254,7 +254,7 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
 
                     <section
                         class="flex relative flex-col justify-center self-center mt-4 w-full text-base font-medium text-center text-white max-w-[310px]">
-                        <div id="ticket-code" class="flex self-center bg-white aspect-square min-h-[210px] w-[210px]" aria-label="QR Code"></div>
+                        <div id="ticket-code" class="bg-dark-primary flex self-center aspect-square min-h-[225px] w-[225px]" aria-label="QR Code"></div>
 
                         <p class="mt-2.5"><?= htmlspecialchars($_SESSION['user']['name'] ?? '???') ?></p>
                     </section>
@@ -336,15 +336,80 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const registerButton = document.getElementById("registerEvent");
             const rejectButton = document.getElementById("rejectEvent");
 
+            const ticketModal = document.getElementById('ticketModal');
+
+            const closeModalBtn = document.getElementById('closeModalBtn');
             const ticketBtn = document.getElementById('acceptEvent');
             const downloadTicketBtn = document.getElementById('downloadTickets');
 
             if (ticketBtn) {
+                ticketBtn.addEventListener('click', () => {
+                    ticketModal.classList.toggle('hidden')
+
+                })
+
+                closeModalBtn.addEventListener('click', () => {
+                    ticketModal.classList.toggle('hidden')
+
+                })
+
+                // ================================================
+
+                function generateQRCode(element, data, options = {}) {
+                    element.innerHTML = '';
+
+                    const defaultOptions = {
+                        width: 225,
+                        height: 225,
+                        colorDark: '#232323',
+                        colorLight: '#226E6A',
+                        // L (7%), M (15%), Q (25%), and H (30%)
+                        correctLevel: QRCode.CorrectLevel.L
+                    };
+
+                    const mergedOptions = {
+                        ...defaultOptions,
+                        ...options
+                    };
+
+                    new QRCode(element, {
+                        text: data,
+                        width: mergedOptions.width,
+                        height: mergedOptions.height,
+                        colorDark: mergedOptions.colorDark,
+                        colorLight: mergedOptions.colorLight,
+                        correctLevel: mergedOptions.correctLevel
+                    });
+                }
+
+                const ticketCode = document.getElementById('ticket-code');
+
+                const ticketData = JSON.stringify({
+                    userId: '<?= $_SESSION['user']['userId'] ?>',
+                    regId: '<?= $regObj['regId'] ?>',
+                    eventId: '<?= $eventObj['eventId'] ?>'
+                });
+
+                <?php  unset($regObj); ?>
+
+                // generateQRCode(ticketCode, ticketData, {
+                //     colorDark: '#FBF8EE',
+                //     colorLight: '#104B48'
+                // });
+
+                if (ticketCode) {
+                    generateQRCode(ticketCode, ticketData);
+
+                }
+
+                // ================================================
+
                 downloadTicketBtn.addEventListener('click', () => {
                     const ticketDiv = document.getElementById('ticket-canvas');
 

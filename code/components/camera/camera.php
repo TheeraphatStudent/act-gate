@@ -9,7 +9,7 @@ class QrCodeReader extends Component
     public function render()
     {
 ?>
-        <div id="camera-container" class="relative w-full h-full max-h-[500px] rounded-xl overflow-hidden">
+        <div id="camera-container" class="relative w-full h-full max-h-[620px] rounded-xl overflow-hidden">
             <video id="qr-video" width="1200" height="500" class="object-fit bg-black/50 overflow-hidden" autoplay></video>
             <canvas class="absolute w-full" id="qr-canvas"></canvas>
 
@@ -29,14 +29,17 @@ class QrCodeReader extends Component
 
         <!-- <span id="qr-result"></span> -->
 
-        <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.min.js"></script>
+        <!-- <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.min.js"></script> -->
+        <!-- <script src="https://cdn.jsdelivr.net/npm/qr-scanner/qr-scanner.min.js"></script> -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"> </script>
         <script type="module">
             import {
                 CameraInit
             } from './components/camera/camera.js';
 
             document.addEventListener('DOMContentLoaded', () => {
-                const cameraInit = new CameraInit();
+                const cameraInit = new CameraInit("<?= $_SESSION['user']['userId'] ?>");
+
             });
         </script>
 <?php

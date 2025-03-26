@@ -226,6 +226,8 @@ $qrreader = new QrCodeReader();
             checkedInTab.classList.remove("active-tab");
 
             qrContainer.classList.add('hidden');
+
+            localStorage.setItem('activeTab', 'approve')
         }
 
         function showCheckedInTable() {
@@ -236,10 +238,26 @@ $qrreader = new QrCodeReader();
             approvedTab.classList.remove("active-tab");
 
             qrContainer.classList.remove('hidden');
+
+            localStorage.setItem('activeTab', 'checkedIn')
         }
 
         approvedTab.addEventListener("click", showApprovedTable);
         checkedInTab.addEventListener("click", showCheckedInTable);
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            switch (localStorage.getItem('activeTab')) {
+                case 'checkedIn':
+                    showCheckedInTable();
+                    break;
+
+                default:
+                    showApprovedTable();
+                    break;
+            }
+
+        })
     </script>
 
     <!-- Reject -->

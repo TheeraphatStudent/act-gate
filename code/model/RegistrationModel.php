@@ -76,6 +76,9 @@ class Registration
             WHERE r.userId = :userId AND r.eventId = :eventId
         ");
 
+            $userId = trim($userId);
+            $eventId = trim($eventId);
+
             $stmt->bindParam(':userId', $userId);
             $stmt->bindParam(':eventId', $eventId);
 
