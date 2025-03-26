@@ -66,11 +66,10 @@ $navigate->setPath(
                                     <td class="py-3 px-4 text-sm font-medium max-w-[150px]"><?= $item['gender'] ?? "-" ?></td>
                                     <td class="py-3 px-4 text-left"> <?= !empty($item['birth']) ? ageCalculator(birth: $item['birth']) : "-" ?> </td>
                                     <td class="py-3 px-4 text-sm font-medium max-w-[150px]"><?= (new Tags($item['status']))->render() ?></td>
-
-                                    <td class="py-3 px-4 text-center">
+                                    <td>
                                         <div class="flex justify-center items-center space-x-2 *:mb-0">
                                             <button type="button" class="p-1.5 rounded-full text-red hover:bg-light-red <?= $item['status'] == "reject" ? 'hidden' : '' ?>" id="reject">
-                                                <img src="public/icons/reject.png" alt="reject">
+                                                <img class="w-4 h-4" src="public/icons/reject.png" alt="reject">
                                             </button>
                                             <form action="..?action=request&on=reg&form=accept" class="<?= $item['status'] == "accepted" ? 'hidden' : '' ?>" method="post">
                                                 <input type="hidden" name="userId" value="<?= $item['userId'] ?>">
@@ -79,7 +78,7 @@ $navigate->setPath(
                                                 <input type="hidden" name="authorId" value="<?= $_SESSION['user']['userId'] ?>">
 
                                                 <button type="submit" class="p-1.5 rounded-full text-primary hover:bg-light-green">
-                                                    <img src="public/icons/accept.png" alt="accept">
+                                                    <img class="w-4 h-4" src="public/icons/accept.png" alt="accept">
                                                 </button>
                                             </form>
                                         </div>
@@ -150,9 +149,7 @@ $navigate->setPath(
                     </thead>
                     <tbody class="divide-y divide-white">
                         <?php if (!empty($allUserAttendOnEvent)) : ?>
-                            <?php foreach (array_reverse($allUserAttendOnEvent) as $item): ?>
-                                <!-- <?php print_r($item); ?> -->
-
+                            <?php foreach (array_reverse($allUserAttendOnEvent) as $item) : ?>
                                 <tr class="hover:bg-dark-primary/10 max-h-16 h-16 *:overflow-hidden *:truncate">
                                     <td class="py-3 px-4 text-sm max-w-[170px]"><?= htmlspecialchars($item['userId'] ?? "-") ?></td>
                                     <td class="py-3 px-4 text-sm max-w-[170px]"><?= htmlspecialchars($item['name'] ?? "-") ?></td>
@@ -167,7 +164,7 @@ $navigate->setPath(
                                                 <input type="hidden" name="eventId" value="<?= $item['eventId'] ?>">
 
                                                 <button type="button" class="p-1.5 rounded-full text-red hover:bg-light-red <?= ($item['status'] == "pending") ? '' : 'hidden' ?>" id="reject">
-                                                    <img src="public/icons/reject.png" alt="reject">
+                                                    <img class="w-4 h-4" src="public/icons/reject.png" alt="reject">
                                                 </button>
                                             </form>
 
@@ -178,7 +175,7 @@ $navigate->setPath(
                                                 <input type="hidden" name="eventId" value="<?= $item['eventId'] ?>">
 
                                                 <button type="submit" class="p-1.5 rounded-full text-primary hover:bg-light-green <?= $item['status'] == "accepted" ? 'hidden' : '' ?>">
-                                                    <img src="public/icons/accept.png" alt="accept">
+                                                    <img class="w-4 h-4" src="public/icons/accept.png" alt="accept">
                                                 </button>
                                             </form>
                                         </div>

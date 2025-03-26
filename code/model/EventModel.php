@@ -198,48 +198,50 @@ class Event
     public function queryAllEventByUserId($userId)
     {
         $query = "
-        SELECT
-            e.eventId,
-            e.cover,
-            e.title,
-            e.maximum,
-            e.type,
-            e.start,
-            e.end,
-            e.venue,
-            e.location,
-            e.organizeId,
-            u.name AS organizeName,
-            COUNT(DISTINCT r.regId) AS joined,  -- Total registered users for the event
-            (CASE 
-                WHEN EXISTS (SELECT 1 FROM Registration r2 WHERE r2.eventId = e.eventId AND r2.userId = :userId AND r2.status = 'pending') THEN 1 -- รออนุมัติ
-                WHEN EXISTS (SELECT 1 FROM Registration r2 WHERE r2.eventId = e.eventId AND r2.userId = :userId AND r2.status = 'accepted') THEN 2 -- อนุมัติแล้ว
-                WHEN EXISTS (SELECT 1 FROM Attendance a2 JOIN Registration r3 ON a2.regId = r3.regId WHERE r3.eventId = e.eventId AND r3.userId = :userId AND a2.status = 'accepted') THEN 3 -- เคยเข้าร่วมแล้ว
-                WHEN EXISTS (SELECT 1 FROM Registration r2 LEFT JOIN Attendance a2 ON r2.regId = a2.regId WHERE r2.eventId = e.eventId AND r2.userId = :userId AND (a2.status = 'reject' OR r2.status = 'reject')) THEN 4 -- ถูกปฏิเสธ
-                ELSE 0
-            END) AS haveBeenJoined
-        FROM Event e
-        LEFT JOIN Registration r ON e.eventId = r.eventId
-        LEFT JOIN User u ON e.organizeId = u.userId
-        GROUP BY 
-            e.eventId, 
-            e.cover, 
-            e.title, 
-            e.maximum, 
-            e.type, 
-            e.start, 
-            e.end,
-            e.venue,
-            e.location,
-            e.organizeId, 
-            u.name;
-    ";
+            SELECT
+                e.eventId,
+                e.cover,
+                e.title,
+                e.maximum,
+                e.type,
+                e.start,
+                e.end,
+                e.venue,
+                e.location,
+                e.organizeId,
+                u.name AS organizeName,
+                COUNT(CASE WHEN a.status = 'pending' THEN a.regId END) AS joined,
+                CASE 
+                    WHEN EXISTS (SELECT 1 FROM Registration r2 WHERE r2.eventId = e.eventId AND r2.userId = :userId AND r2.status = 'pending') THEN 1 -- รออนุมัติ
+                    WHEN EXISTS (SELECT 1 FROM Registration r2 WHERE r2.eventId = e.eventId AND r2.userId = :userId AND r2.status = 'accepted') THEN 2 -- อนุมัติแล้ว
+                    WHEN EXISTS (SELECT 1 FROM Attendance a2 JOIN Registration r3 ON a2.regId = r3.regId WHERE r3.eventId = e.eventId AND r3.userId = :userId AND a2.status = 'accepted') THEN 3 -- เคยเข้าร่วมแล้ว
+                    WHEN EXISTS (SELECT 1 FROM Registration r2 LEFT JOIN Attendance a2 ON r2.regId = a2.regId WHERE r2.eventId = e.eventId AND r2.userId = :userId AND (a2.status = 'reject' OR r2.status = 'reject')) THEN 4 -- ถูกปฏิเสธ
+                    ELSE 0
+                END AS haveBeenJoined
+            FROM Event e
+            LEFT JOIN Registration r ON e.eventId = r.eventId
+            LEFT JOIN User u ON e.organizeId = u.userId
+            LEFT JOIN Attendance a ON r.regId = a.regId
+            GROUP BY 
+                e.eventId, 
+                e.cover, 
+                e.title, 
+                e.maximum, 
+                e.type, 
+                e.start, 
+                e.end,
+                e.venue,
+                e.location,
+                e.organizeId, 
+                u.name;
+            ";
 
         $statement = $this->connection->prepare($query);
         $statement->bindParam(':userId', $userId);
         $statement->execute();
         return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
+
 
     public function getAllEventsById($userId)
     {
@@ -439,25 +441,20 @@ class Event
     public function searchEvent($title, $dateStart, $dateEnd)
     {
         try {
-            $query = "
+            $base = "
                 SELECT
-                    e.eventId,
-                    e.cover,
-                    e.title,
-                    e.maximum,
-                    e.type,
-                    e.start,
-                    e.end,
-                    e.venue,
-                    e.organizeId,
-                    e.location,
-                    u.name AS organizeName,
-                    COUNT(CASE WHEN a.status = 'pending' THEN a.regId END) AS joined
-                FROM Event e
-                LEFT JOIN Registration r ON e.eventId = r.eventId
-                LEFT JOIN Attendance a ON r.regId = a.regId
-                JOIN User u ON e.organizeId = u.userId
-                WHERE 1=1
+                        e.eventId,
+                        e.cover,
+                        e.title,
+                        e.maximum,
+                        e.type,
+                        e.start,
+                        e.end,
+                        e.venue,
+                        e.organizeId,
+                        e.location,
+                        u.name AS organizeName,
+                        COUNT(CASE WHEN a.status = 'pending' THEN a.regId END) AS joined
             ";
 
             $params = [];
@@ -465,19 +462,6 @@ class Event
 
             if ($queryCondition) {
                 $query = "
-                SELECT
-                    e.eventId,
-                    e.cover,
-                    e.title,
-                    e.maximum,
-                    e.type,
-                    e.start,
-                    e.end,
-                    e.venue,
-                    e.location,
-                    e.organizeId,
-                    u.name AS organizeName,
-                    COUNT(DISTINCT r.regId) AS joined,  -- Total registered users for the event
                     (CASE 
                         WHEN EXISTS (SELECT 1 FROM Registration r2 WHERE r2.eventId = e.eventId AND r2.userId = :userId AND r2.status = 'pending') THEN 1 -- รออนุมัติ
                         WHEN EXISTS (SELECT 1 FROM Registration r2 WHERE r2.eventId = e.eventId AND r2.userId = :userId AND r2.status = 'accepted') THEN 2 -- อนุมัติแล้ว
@@ -490,7 +474,17 @@ class Event
                 LEFT JOIN User u ON e.organizeId = u.userId
                 WHERE 1=1
                 ";
+            } else {
+                $query = "
+                    FROM Event e
+                    LEFT JOIN Registration r ON e.eventId = r.eventId
+                    LEFT JOIN Attendance a ON r.regId = a.regId
+                    JOIN User u ON e.organizeId = u.userId
+                    WHERE 1=1
+                ";
             }
+
+            $base .= $query;
 
             if (!empty($title)) {
                 $query .= " AND e.title LIKE :title";

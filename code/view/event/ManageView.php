@@ -32,7 +32,7 @@
                     <tbody class="divide-y divide-gray-200">
                         <?php if (!empty($allEvents)): ?>
                             <?php foreach (array_reverse($allEvents) as $item): ?>
-                                <tr class="hover:bg-gray-50 transition duration-150">
+                                <tr class="hover:bg-dark-primary/10 transition duration-150">
                                     <td class="py-3 px-4 text-sm"><?= $item['eventId'] ?></td>
                                     <td class="py-3 px-4 text-sm font-medium"><?= $item['title'] ?></td>
                                     <td class="py-3 px-4 text-center"><?= $item['maximum'] ?></td>
