@@ -1,7 +1,7 @@
 class CameraInit {
     video = null;
     content = null;
-    result = null;
+    // result = null;
     suggested = null;
     reloadBtn = null;
     cameraBg = null;
@@ -14,7 +14,7 @@ class CameraInit {
         this.container = document.getElementById("camera-container");
         this.video = document.getElementById("qr-video");
 
-        this.result = document.getElementById("qr-result");
+        // this.result = document.getElementById("qr-result");
 
         this.cameraBg = document.getElementById('camera-bg');
         this.suggested = document.getElementById('suggested');
@@ -96,10 +96,8 @@ class CameraInit {
                 this.drawLine(location.bottomRightCorner, location.bottomLeftCorner, "#FF3B58");
                 this.drawLine(location.bottomLeftCorner, location.topLeftCorner, "#FF3B58");
 
-                this.result.innerText = "QR Code detected: " + code.data;
+                // this.result.innerText = "QR Code detected: " + code.data;
                 alert("QR Code detected: " + code.data);
-            } else {
-                this.result.innerText = "No QR code detected.";
             }
         }
 

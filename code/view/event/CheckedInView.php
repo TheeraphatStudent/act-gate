@@ -38,7 +38,6 @@ $qrreader = new QrCodeReader();
     <div class="flex flex-col gap-10 w-full max-w-content">
         <?php
         $navigate->render();
-        $qrreader->render();
         ?>
 
         <div style='border-bottom: 2px solid #FBF8EE'>
@@ -138,6 +137,10 @@ $qrreader = new QrCodeReader();
             </div>
         </div>
 
+        <div id="qrreader-container" class="hidden">
+            <?php $qrreader->render(); ?>
+        </div>
+
         <!-- Checked In -->
         <div id="checkedin-table" class="bg-white rounded-lg shadow-lg overflow-hidden hidden">
             <div class="overflow-x-auto">
@@ -213,12 +216,16 @@ $qrreader = new QrCodeReader();
         const approvedTable = document.getElementById("approved-table");
         const checkedInTable = document.getElementById("checkedin-table");
 
+        const qrContainer = document.getElementById("qrreader-container");
+
         function showApprovedTable() {
             approvedTable.classList.remove("hidden");
             checkedInTable.classList.add("hidden");
 
             approvedTab.classList.add("active-tab");
             checkedInTab.classList.remove("active-tab");
+
+            qrContainer.classList.add('hidden');
         }
 
         function showCheckedInTable() {
@@ -227,6 +234,8 @@ $qrreader = new QrCodeReader();
 
             checkedInTab.classList.add("active-tab");
             approvedTab.classList.remove("active-tab");
+
+            qrContainer.classList.remove('hidden');
         }
 
         approvedTab.addEventListener("click", showApprovedTable);

@@ -99,7 +99,7 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                                     $buttons = [
                                         'accepted' => [
                                             ['class' => 'btn-primary w-full', 'label' => 'แสดงบัตร', 'id' => 'acceptEvent'],
-                                            ['class' => 'btn-primary-outline w-full', 'label' => 'ดาวน์โหลดบัตร', 'id' => 'downloadTicket']
+                                            // ['class' => 'btn-primary-outline w-full', 'label' => 'ดาวน์โหลดบัตร', 'id' => 'downloadTicket']
                                         ],
                                         'pending' => [
                                             ['class' => 'btn-warring w-full', 'label' => 'รออนุมัติ', 'id' => 'pendingEvent']
@@ -141,7 +141,6 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                                             foreach ($buttons[$status] as $button) {
                                                 echo "<button type='button' class='{$button['class']}' id='{$button['id']}'><span>{$button['label']}</span></button>";
                                             }
-                                        
                                         }
                                     }
 
@@ -213,7 +212,7 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
             <div class="flex w-full gap-4 mt-2 *:bg-dark-primary/40">
                 <div class="flex flex-col w-full rounded-lg py-2 px-4 text-center">
                     <p class="text-xl font-bold text-white"><?= $organizeInfo['total_events_created'] ?></p>
-                    <span class="text-sm text-white">อีเวนท์ที่สร้าง</span>
+                    <span class="text-sm text-white">อีเวนท์ที่สร้าง</span>s
                 </div>
                 <div class="flex flex-col w-full rounded-lg py-2 px-4 text-center">
                     <p class="text-xl font-bold text-white"><?= $organizeInfo['total_events_joined'] ?></p>
@@ -221,6 +220,71 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                 </div>
             </div>
         </section>
+    </div>
+
+    <div id="ticketModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] mt-24">
+        <div class="bg-white shadow-2xl rounded-xl w-full max-w-[350px] p-5 h-fit *:w-full">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-kanit text-center w-full text-dark-secondary">บัตรเข้างานของคุณ</h3>
+                <button type="button" id="closeModalBtn" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="h-[400px] rounded-md overflow-y-auto">
+                <section class="flex relative flex-col p-5 w-full">
+                    <img
+                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/84b74064b3c7fb5518c3a8edb49980b6cb6dfb39?placeholderIfAbsent=true&apiKey=529d5ad9e15745e397b7b5df4f8f9ef8"
+                        class="object-cover absolute inset-0 size-full"
+                        alt="Ticket background" />
+
+                    <section
+                        class="flex relative gap-2.5 justify-center items-center text-base text-center text-orange-50">
+                        <div class="flex flex-col items-center self-stretch my-auto">
+                            <img
+                                src="https://cdn.builder.io/api/v1/image/assets/TEMP/5ec5ae4f426207f473149a9296d01f593fbcfe6d?placeholderIfAbsent=true&apiKey=529d5ad9e15745e397b7b5df4f8f9ef8"
+                                class="object-contain aspect-square w-[24px]"
+                                alt="ACT GATE logo" />
+                            <span class="mt-2.5">ACT GATE</span>
+                        </div>
+                    </section>
+
+                    <section
+                        class="flex relative flex-col justify-center self-center mt-4 w-full text-base font-medium text-center text-orange-50 max-w-[310px]">
+                        <div
+                            class="flex self-center bg-white aspect-square min-h-[210px] w-[210px]"
+                            aria-label="QR Code"></div>
+                        <p class="mt-2.5"><?= htmlspecialchars($_SESSION['user']['name'] ?? '???') ?></p>
+                    </section>
+
+                    <div class="flex items-center justify-center rounded-full bg-primary text-white text-[36px] font-bold border-2 border-white object-contain self-center mt-4 max-w-full aspect-square w-[100px] z-10">
+                        <span><?= htmlspecialchars(strtoupper(substr(($_SESSION['user']['username'] ?? '?'), 0, 1))) ?></span>
+                    </div>
+
+                    <section class="flex relative flex-col mt-2 p-4">
+                        <h2 class="text-2xl font-bold text-center text-white mb-2"><?= htmlspecialchars($eventObj['title']) ?></h2>
+
+                        <div class="flex flex-col items-center gap-4">
+                            <div class="flex flex-col items-center gap-1.5">
+                                <h3 class="text-lg font-semibold text-amber-100">ช่วงเวลางาน</h3>
+                                <div class="flex flex-col items-start font-kanit text-sm text-white leading-none font-normal">
+                                    <span class="font-medium">เริ่มงาน: <span class="font-kanit font-light text-sm"><?= dateFormat($eventObj['start']) ?></span></span>
+                                    <span class="font-medium">สิ้นสุด: <span class="font-kanit font-light text-sm"><?= dateFormat($eventObj['end']) ?></span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                </section>
+            </div>
+
+            <a href="../?action=login" class="btn-primary-outline mt-5">
+                <img src="public/icons/" alt="">
+                <span>ดาวน์โหลดบัตร</span>
+            </a>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -273,6 +337,17 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
         document.addEventListener("DOMContentLoaded", function() {
             const registerButton = document.getElementById("registerEvent");
             const rejectButton = document.getElementById("rejectEvent");
+
+            const ticketBtn = document.getElementById('acceptEvent');
+
+            if (ticketBtn) {
+                ticketBtn.addEventListener('click', () => {
+
+
+                })
+
+            }
+
             const form = document.getElementById('regForm');
 
             if (registerButton) {

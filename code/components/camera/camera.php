@@ -27,7 +27,7 @@ class QrCodeReader extends Component
             </div>
         </div>
 
-        <span id="qr-result"></span>
+        <!-- <span id="qr-result"></span> -->
 
         <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.min.js"></script>
         <script type="module">
