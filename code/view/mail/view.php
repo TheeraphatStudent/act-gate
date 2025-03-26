@@ -41,7 +41,9 @@ $navigate = new Breadcrumb();
                         <div class="flex flex-col md:flex-row justify-between items-start gap-4 p-4 rounded-xl bg-white w-full shadow-sm">
                             <div class="flex flex-col justify-start items-start gap-3 w-full md:w-3/5">
                                 <div class="flex items-center gap-2.5 w-full">
-                                    <div class="rounded-full w-10 h-10 bg-primary/50 flex-shrink-0"></div>
+                                    <div class="w-10 h-10 flex items-center justify-center rounded-full bg-primary text-white text-xl font-bold">
+                                        <?= htmlspecialchars(strtoupper(substr($about['organizeName'], 0, 1))) ?>
+                                    </div>
                                     <div class="flex flex-col justify-center">
                                         <div class="font-bold text-lg text-dark-primary"><?= $about['organizeName'] ?></div>
                                         <div class="font-light text-sm text-neutral-800"><?= dateFormat($about['start']) ?> - <?= dateFormat($about['end']) ?></div>
@@ -94,8 +96,6 @@ $navigate = new Breadcrumb();
                                     </div>
                                 </div>
 
-
-                                <!-- Action Buttons -->
                                 <div class="flex flex-row justify-start items-center gap-2.5 w-full">
                                     <!-- <div class="flex justify-center items-center p-2 rounded-lg bg-light-red">
                                         <img
@@ -113,14 +113,15 @@ $navigate = new Breadcrumb();
                                                     alt="Ticket" /> -->
                                                 <span class="text-sm text-white font-medium" lang="th">รออนุมัติ</span>
                                             </div>
-                                            <!-- <div class="flex justify-center items-center w-6 h-6">
+                                            <div class="flex justify-center items-center w-6 h-6">
                                                 <img
                                                     class="w-3 h-3"
                                                     src="public/icons/arrow-right.svg"
                                                     alt="Arrow" />
-                                            </div> -->
+                                            </div>
                                         </div>
                                     <?php endif ?>
+
                                     <?php if ($about['reg_status'] === 'accepted' && $about['att_status'] === 'pending'): ?>
                                         <div class="flex justify-between items-center px-4 py-2 rounded-lg bg-primary hover:cursor-pointer hover:bg-dark-primary flex-grow">
                                             <div class="flex items-center gap-2">
@@ -139,6 +140,7 @@ $navigate = new Breadcrumb();
                                             </div>
                                         </div>
                                     <?php endif ?>
+
                                     <?php if ($about['reg_status'] === 'accepted' && $about['att_status'] === 'accepted'): ?>
                                         <div class="flex justify-between items-center px-4 py-2 rounded-lg bg-gray-400 hover:cursor-pointer hover:bg-gray-800 flex-grow">
                                             <div class="flex items-center gap-2">
@@ -165,13 +167,12 @@ $navigate = new Breadcrumb();
                 <?php else : ?>
                     <div class="flex flex-col gap-6 text-container justify-center items-center min-h-[450px] drop-shadow-2xl">
                         <div class="animated-text text-white gap-0.5">
-
                             <?php
                             $text = "คุณยังไม่เคยเข้าร่วมกิจกรรม";
                             $textArray = preg_split('//u', $text, -1, PREG_SPLIT_NO_EMPTY);
 
                             foreach ($textArray as $key => $value) {
-                                echo "<span class='text-6xl'> $value </span>";
+                                echo "<span class='text-6xl' style='--i:" . ($key + 1) . "'>$value</span>";
                             }
                             ?>
                         </div>

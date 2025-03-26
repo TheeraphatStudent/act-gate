@@ -118,7 +118,11 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                                     $status = (isset($regObj['data']['status']) ? trim($regObj['data']['status']) : null) ?? 'default';
                                     $status = in_array($status, Register::REGISTER_STATUS) ? $status : 'default';
 
-                                    // print_r($status);
+                                    // print_r($eventId);
+                                    // echo '<br>';
+                                    // print_r($userId);
+                                    // echo '<br>';
+                                    // print_r($regObj);
 
                                     if (new DateTime() < new DateTime($eventObj['start'])) {
                                     ?>
@@ -243,10 +247,10 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                     case 403:
                         Swal.fire({
                             title: "เกิดข้อผิดพลาด",
-                            text: "ดูเหมือนว่าคุณยังไม่ได้ยืนยันตัวตน",
+                            text: "จำเป็นต้องกรอกข้อมูลส่วนตัวให้เรียบร้อย",
                             icon: "warning",
                             showDenyButton: true,
-                            confirmButtonText: "ยืนยันตอนนี้",
+                            confirmButtonText: "เพิ่มข้อมูลตอนนี้",
                             denyButtonText: "ยังก่อน"
                         }).then((res) => {
                             if (res.isConfirmed) {

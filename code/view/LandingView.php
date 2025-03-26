@@ -37,7 +37,7 @@ $calendar = new SchedulerCalendar();
     <!-- Cover Image Container -->
     <div class="relative lg:pt-[12rem] lg:pb-[8rem] py-[8rem]">
         <div
-            class="flex flex-col justify-end items-center w-[clamp(350px,85vw,1650px)] min-w-[400px] h-[clamp(300px,40vw,700px)] rounded-3xl bg-[url(/public/images/banner.jpg)] bg-center bg-cover overflow-hidden">
+            class="flex flex-col justify-end items-center w-[clamp(350px,85vw,1650px)] min-w-[400px] h-[clamp(300px,40vw,700px)] rounded-3xl bg-[url(/public/images/banner.jpg)] bg-center bg-cover overflow-hidden bg-dark-primary">
 
             <!-- Text -->
             <div
@@ -181,7 +181,7 @@ $calendar = new SchedulerCalendar();
                     $textArray = preg_split('//u', $text, -1, PREG_SPLIT_NO_EMPTY);
 
                     foreach ($textArray as $key => $value) {
-                        echo "<span class='text-6xl'> $value </span>";
+                        echo "<span class='text-6xl' style='--i:" . ($key + 1) . "'>$value</span>";
                     }
                     ?>
                 </div>
@@ -402,7 +402,7 @@ $calendar = new SchedulerCalendar();
     <span class="absolute bottom-4 left-4 text-primary shadow-sm">&copy; <?= date('Y') ?> | Act Gate All Rights Reserved</span>
 
     <!-- <footer class="w-full h-[500px] bg-white">
-    </footer> -->
+    </footer> -->'
 </body>
 
 </html>

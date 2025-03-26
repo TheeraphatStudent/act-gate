@@ -4,10 +4,13 @@ namespace FinalProject\View\Event;
 
 require_once('components/tags.php');
 require_once('components/breadcrumb.php');
+require_once('components/camera/camera.php');
+
 require_once('utils/useDateTime.php');
 
 use FinalProject\Components\Breadcrumb;
 use FinalProject\Components\Tags;
+use FinalProject\Components\QrCodeReader;
 
 $navigate = new Breadcrumb();
 
@@ -15,6 +18,8 @@ $navigate->setPath(
     data: ['Dashboard', 'จัดการผู้เข้าร่วม', $_GET['id']],
     prevPath: '?action=event.manage'
 );
+
+$qrreader = new QrCodeReader();
 
 ?>
 
@@ -33,7 +38,7 @@ $navigate->setPath(
     <div class="flex flex-col gap-10 w-full max-w-content">
         <?php
         $navigate->render();
-        // $qrreader->render();
+        $qrreader->render();
         ?>
 
         <div style='border-bottom: 2px solid #FBF8EE'>

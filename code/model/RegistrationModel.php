@@ -72,8 +72,8 @@ class Registration
     {
         try {
             $stmt = $this->connection->prepare("
-            SELECT * FROM Registration 
-            WHERE userId = :userId AND eventId = :eventId
+            SELECT * FROM Registration r
+            WHERE r.userId = :userId AND r.eventId = :eventId
         ");
 
             $stmt->bindParam(':userId', $userId);
