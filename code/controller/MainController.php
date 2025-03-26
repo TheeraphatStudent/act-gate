@@ -34,14 +34,15 @@ class MainController
         $event = new Event($this->connection);
 
         if (!isset($_SESSION['search']['value'])) {
-            $allEvents =  $event->getAllEvents();
+            if (isset($_SESSION['user']['userId'])) {
+                $allEvents = $event->queryAllEventByUserId($_SESSION['user']['userId']);
+            } else {
+                $allEvents =  $event->getAllEvents();
+
+            }
         } else {
             $allEvents = $_SESSION['search']['value'];
             unset($_SESSION['search']);
-        }
-
-        if (isset($_SESSION['user']['userId'])) {
-            $allEvents = $event->queryAllEventByUserId($_SESSION['user']['userId']);
         }
 
         require_once("./view/LandingView.php");
@@ -106,7 +107,7 @@ class MainController
                 case 'attendee':
                     $regObj = $regModel->getRegisterById(userId: $userId, eventId: $eventId);
                     $eventObj = $eventModel->getEventById($eventId);
-                    $organizeInfo = ($userModel->getUserByUserId($eventObj['organizeId']))['user']; 
+                    $organizeInfo = ($userModel->getUserByUserId($eventObj['organizeId']))['user'];
 
                     require_once("./view/event/AttendeeView.php");
                     break;

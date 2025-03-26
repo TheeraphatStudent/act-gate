@@ -438,114 +438,18 @@ class Event
         }
     }
 
-    public function searchEvent($title, $dateStart, $dateEnd)
+    public function searchEvents($title = null, $dateStart = null, $dateEnd = null, $dateType = null, $eventType = null)
     {
         try {
-            $base = "
-                SELECT
-                        e.eventId,
-                        e.cover,
-                        e.title,
-                        e.maximum,
-                        e.type,
-                        e.start,
-                        e.end,
-                        e.venue,
-                        e.organizeId,
-                        e.location,
-                        u.name AS organizeName,
-                        COUNT(CASE WHEN a.status = 'pending' THEN a.regId END) AS joined
-            ";
+            $title = $title ? trim($title) : null;
+            $dateStart = $dateStart ? trim($dateStart) : null;
+            $dateEnd = $dateEnd ? trim($dateEnd) : null;
+            $dateType = $dateType ? trim($dateType) : null;
+            $eventType = $eventType ? trim($eventType) : '';
 
-            $params = [];
-            $queryCondition = isset($_SESSION['user']) && isset($_SESSION['user']['userId']);
-
-            if ($queryCondition) {
-                $query = "
-                    (CASE 
-                        WHEN EXISTS (SELECT 1 FROM Registration r2 WHERE r2.eventId = e.eventId AND r2.userId = :userId AND r2.status = 'pending') THEN 1 -- รออนุมัติ
-                        WHEN EXISTS (SELECT 1 FROM Registration r2 WHERE r2.eventId = e.eventId AND r2.userId = :userId AND r2.status = 'accepted') THEN 2 -- อนุมัติแล้ว
-                        WHEN EXISTS (SELECT 1 FROM Attendance a2 JOIN Registration r3 ON a2.regId = r3.regId WHERE r3.eventId = e.eventId AND r3.userId = :userId AND a2.status = 'accepted') THEN 3 -- เคยเข้าร่วมแล้ว
-                        WHEN EXISTS (SELECT 1 FROM Registration r2 LEFT JOIN Attendance a2 ON r2.regId = a2.regId WHERE r2.eventId = e.eventId AND r2.userId = :userId AND (a2.status = 'reject' OR r2.status = 'reject')) THEN 4 -- ถูกปฏิเสธ
-                        ELSE 0
-                    END) AS haveBeenJoined
-                FROM Event e
-                LEFT JOIN Registration r ON e.eventId = r.eventId
-                LEFT JOIN User u ON e.organizeId = u.userId
-                WHERE 1=1
-                ";
-            } else {
-                $query = "
-                    FROM Event e
-                    LEFT JOIN Registration r ON e.eventId = r.eventId
-                    LEFT JOIN Attendance a ON r.regId = a.regId
-                    JOIN User u ON e.organizeId = u.userId
-                    WHERE 1=1
-                ";
-            }
-
-            $base .= $query;
-
-            if (!empty($title)) {
-                $query .= " AND e.title LIKE :title";
-                $params[':title'] = "%$title%";
-            }
-
-            if (!empty($dateStart) && !empty($dateEnd)) {
-                $query .= " AND DATE(e.start) BETWEEN :dateStart AND :dateEnd";
-                $params[':dateStart'] = $dateStart;
-                $params[':dateEnd'] = $dateEnd;
-            }
-
-            if ($queryCondition) {
-                $query .= " 
-                GROUP BY 
-                    e.eventId, 
-                    e.cover, 
-                    e.title, 
-                    e.maximum, 
-                    e.type, 
-                    e.start, 
-                    e.end,
-                    e.venue,
-                    e.organizeId, 
-                    e.location,
-                    u.name,
-                    r.regId,
-                    a.status;";
-            } else {
-                $query .= " 
-                GROUP BY 
-                    e.eventId, 
-                    e.cover, 
-                    e.title, 
-                    e.maximum, 
-                    e.type, 
-                    e.start, 
-                    e.end,
-                    e.venue,
-                    e.organizeId, 
-                    e.location,
-                    u.name;";
-            }
-
-            $stmt = $this->connection->prepare($query);
-            $stmt->execute($params);
-
-            $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            return ["data" => $events];
-        } catch (PDOException $e) {
-            return ['error' => $e->getMessage(), 'data' => []];
-        }
-    }
-
-    public function searchEventByCategories($dateType, $eventType)
-    {
-        try {
             $_SESSION['selected_type'] = $eventType;
 
-            $query = "
+            $base = "
             SELECT
                 e.eventId,
                 e.cover,
@@ -556,45 +460,67 @@ class Event
                 e.end,
                 e.venue,
                 e.organizeId,
+                e.location,
                 u.name AS organizeName,
-                COUNT(CASE WHEN a.status = 'accepted' THEN a.regId END) AS joined
-            FROM Event e
-            LEFT JOIN Registration r ON e.eventId = r.eventId
-            LEFT JOIN Attendance a ON r.regId = a.regId
-            JOIN User u ON e.organizeId = u.userId
-            WHERE 1=1";
+                COUNT(DISTINCT r.regId) AS joined
+        ";
+
             $params = [];
+            $conditions = [];
+
+            $query = "
+                FROM Event e
+                LEFT JOIN User u ON e.organizeId = u.userId
+                LEFT JOIN Registration r ON e.eventId = r.eventId
+                WHERE 1=1
+            ";
+
+            if (!empty($title)) {
+                $conditions[] = "e.title LIKE :title";
+                $params[':title'] = "%$title%";
+            }
+
+            if (!empty($dateStart) && !empty($dateEnd)) {
+                $conditions[] = "DATE(e.start) BETWEEN :dateStart AND :dateEnd";
+                $params[':dateStart'] = $dateStart;
+                $params[':dateEnd'] = $dateEnd;
+            }
 
             $now = new DateTime();
 
             if (!empty($dateType)) {
                 switch ($dateType) {
                     case 'day':
-                        $query .= " AND (DATE(e.start) = DATE(:today) OR DATE(e.end) = DATE(:today))";
+                        $conditions[] = "(DATE(e.start) = DATE(:today) OR DATE(e.end) = DATE(:today))";
                         $params[':today'] = $now->format('Y-m-d');
                         break;
                     case 'week':
-                        $query .= " AND (DATE(e.start) BETWEEN :weekStart AND :weekEnd OR DATE(e.end) BETWEEN :weekStart AND :weekEnd)";
+                        $conditions[] = "(DATE(e.start) BETWEEN :weekStart AND :weekEnd OR DATE(e.end) BETWEEN :weekStart AND :weekEnd)";
                         $params[':weekStart'] = $now->format('Y-m-d');
                         $params[':weekEnd'] = $now->modify('+7 days')->format('Y-m-d');
                         break;
                     case 'month':
-                        $query .= " AND (
-                            (MONTH(e.start) = MONTH(:currentMonth) AND YEAR(e.start) = YEAR(:currentYear)) OR 
-                            (MONTH(e.end) = MONTH(:currentMonth) AND YEAR(e.end) = YEAR(:currentYear))
-                        )";
-                        $params[':currentMonth'] = $now->format('Y-m-d');
-                        $params[':currentYear'] = $now->format('Y-m-d');
+                        $conditions[] = "(
+                        (MONTH(e.start) = MONTH(:currentMonth) AND YEAR(e.start) = YEAR(:currentYear)) OR 
+                        (MONTH(e.end) = MONTH(:currentMonth) AND YEAR(e.end) = YEAR(:currentYear))
+                    )";
+                        $params[':currentMonth'] = $now->format('m');
+                        $params[':currentYear'] = $now->format('Y');
                         break;
                 }
             }
 
             if (!empty($eventType) && $eventType !== 'any') {
-                $query .= " AND e.type = :type OR e.type = 'any'";
+                $conditions[] = "(e.type = :type OR e.type = 'any')";
                 $params[':type'] = $eventType;
             }
 
-            $query .= " GROUP BY 
+            if (!empty($conditions)) {
+                $query .= " AND " . implode(" AND ", $conditions);
+            }
+
+            $query .= " 
+            GROUP BY 
                 e.eventId, 
                 e.cover, 
                 e.title, 
@@ -604,20 +530,115 @@ class Event
                 e.end,
                 e.venue,
                 e.organizeId, 
-                u.name";
+                e.location,
+                u.name
+        ";
 
-            // var_dump($query);
+            $fullQuery = $base . $query;
+            $stmt = $this->connection->prepare($fullQuery);
 
-            $stmt = $this->connection->prepare($query);
+            // error_log("Search Query: " . $fullQuery);
+            // error_log("Search Params: " . print_r($params, true));
+
             $stmt->execute($params);
-
             $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            return ["data" => $events];
+            // error_log("Search Results: " . print_r($events, true));
+
+            return [
+                'data' => $events,
+                'total_results' => count($events),
+                'query_params' => $params
+            ];
         } catch (PDOException $e) {
-            return ['error' => $e->getMessage(), 'data' => []];
+            // error_log("Search Events Error: " . $e->getMessage());
+
+            return [
+                'error' => $e->getMessage(),
+                'data' => [],
+                'query_params' => $params
+            ];
         }
     }
+
+    // public function searchEventByCategories($dateType, $eventType)
+    // {
+    //     try {
+    //         $_SESSION['selected_type'] = $eventType;
+
+    //         $query = "
+    //         SELECT
+    //             e.eventId,
+    //             e.cover,
+    //             e.title,
+    //             e.maximum,
+    //             e.type,
+    //             e.start,
+    //             e.end,
+    //             e.venue,
+    //             e.organizeId,
+    //             u.name AS organizeName,
+    //             COUNT(CASE WHEN a.status = 'accepted' THEN a.regId END) AS joined
+    //         FROM Event e
+    //         LEFT JOIN Registration r ON e.eventId = r.eventId
+    //         LEFT JOIN Attendance a ON r.regId = a.regId
+    //         JOIN User u ON e.organizeId = u.userId
+    //         WHERE 1=1";
+    //         $params = [];
+
+    //         $now = new DateTime();
+
+    //         if (!empty($dateType)) {
+    //             switch ($dateType) {
+    //                 case 'day':
+    //                     $query .= " AND (DATE(e.start) = DATE(:today) OR DATE(e.end) = DATE(:today))";
+    //                     $params[':today'] = $now->format('Y-m-d');
+    //                     break;
+    //                 case 'week':
+    //                     $query .= " AND (DATE(e.start) BETWEEN :weekStart AND :weekEnd OR DATE(e.end) BETWEEN :weekStart AND :weekEnd)";
+    //                     $params[':weekStart'] = $now->format('Y-m-d');
+    //                     $params[':weekEnd'] = $now->modify('+7 days')->format('Y-m-d');
+    //                     break;
+    //                 case 'month':
+    //                     $query .= " AND (
+    //                         (MONTH(e.start) = MONTH(:currentMonth) AND YEAR(e.start) = YEAR(:currentYear)) OR 
+    //                         (MONTH(e.end) = MONTH(:currentMonth) AND YEAR(e.end) = YEAR(:currentYear))
+    //                     )";
+    //                     $params[':currentMonth'] = $now->format('Y-m-d');
+    //                     $params[':currentYear'] = $now->format('Y-m-d');
+    //                     break;
+    //             }
+    //         }
+
+    //         if (!empty($eventType) && $eventType !== 'any') {
+    //             $query .= " AND (e.type = :type OR e.type = 'any')";
+    //             $params[':type'] = $eventType;
+    //         }
+
+    //         $query .= " GROUP BY 
+    //             e.eventId, 
+    //             e.cover, 
+    //             e.title, 
+    //             e.maximum, 
+    //             e.type, 
+    //             e.start, 
+    //             e.end,
+    //             e.venue,
+    //             e.organizeId, 
+    //             u.name";
+
+    //         // var_dump($query);
+
+    //         $stmt = $this->connection->prepare($query);
+    //         $stmt->execute($params);
+
+    //         $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    //         return ["data" => $events];
+    //     } catch (PDOException $e) {
+    //         return ['error' => $e->getMessage(), 'data' => []];
+    //     }
+    // }
 
     public function getRegistrationEventByUserId() {}
 

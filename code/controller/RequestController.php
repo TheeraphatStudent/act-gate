@@ -112,11 +112,11 @@ class RequestController
                 return response(status: $result['status'], message: $result['message'], data: $data, type: 'json', redirect: "../?action=event.manage");
 
             case 'search':
-                $result = $this->event->searchEvent(title: $data['looking'], dateStart: $data['dateStarted'], dateEnd: $data['dateEnded']);
+                $result = $this->event->searchEvents(title: $data['looking'], dateStart: $data['dateStarted'], dateEnd: $data['dateEnded']);
                 return response(status: 200, message: "Search Work", data: $result, type: 'search');
 
             case 'search_categories':
-                $result = $this->event->searchEventByCategories(dateType: $data['date'] ?? null, eventType: $data['type'] ?? null);
+                $result = $this->event->searchEvents(dateType: $data['date'] ?? null, eventType: $data['type'] ?? null);
                 return response(status: 200, message: "Search Work", data: $result, type: 'search');
 
             case 'register':
