@@ -157,7 +157,7 @@ class RequestController
                         status: $authorId['status'],
                         message: $authorId['message'],
                         data: [null],
-                        redirect: '../?action=event.statistic&id=' . $data['eventId']
+                        redirect: '../?action=event.manage-attend&id=' . $data['eventId']
                     );
                 }
 
@@ -174,7 +174,7 @@ class RequestController
                     status: $result['status'],
                     message: $result['message'],
                     data: $result,
-                    redirect: '../?action=event.statistic&id=' . $data['eventId']
+                    redirect: '../?action=event.manage-attend&id=' . $data['eventId']
                 );
 
             case 'reject':
@@ -188,7 +188,7 @@ class RequestController
                 return response(
                     status: $response['status'],
                     message: $response['message'],
-                    redirect: '../?action=event.statistic&id=' . $data['eventId']
+                    redirect: '../?action=event.manage-attend&id=' . $data['eventId']
                 );
 
             default:

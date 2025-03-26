@@ -2,10 +2,11 @@
 
 namespace FinalProject\View;
 
-
 require_once('components/texteditor/texteditor.php');
 require_once('components/breadcrumb.php');
+
 require_once('utils/useTags.php');
+require_once('utils/useDateTime.php');
 
 use FinalProject\Components\TextEditor;
 
@@ -42,13 +43,13 @@ $navigate = new Breadcrumb();
                                 <div class="flex items-center gap-2.5 w-full">
                                     <div class="rounded-full w-10 h-10 bg-primary/50 flex-shrink-0"></div>
                                     <div class="flex flex-col justify-center">
-                                        <div class="font-bold text-lg text-black"><?= $about['organizeName'] ?></div>
-                                        <div class="font-light text-sm text-neutral-800"><?= $about['start'] ?> - <?= $about['end'] ?></div>
+                                        <div class="font-bold text-lg text-dark-primary"><?= $about['organizeName'] ?></div>
+                                        <div class="font-light text-sm text-neutral-800"><?= dateFormat($about['start']) ?> - <?= dateFormat($about['end']) ?></div>
                                     </div>
                                 </div>
 
                                 <div class="w-full h-14 max-h-14 overflow-y-auto">
-                                    <h2 class="font-bold text-base text-black mb-1"><?= $about['title'] ?></h2>
+                                    <h2 class="font-bold text-base text-dark-primary mb-1"><?= $about['title'] ?></h2>
                                     <?php
                                     $editor = new TextEditor();
                                     $editor->updatetextarea($about['description'], false);
@@ -128,17 +129,14 @@ $navigate = new Breadcrumb();
                                                     src="public/icons/ticket.svg"
                                                     alt="Ticket" />
 
-                                                <!-- Event.refId&u=User.primaryKey -->
-                                                <!-- X12xa9RT&u=1 -->
-
-                                                <span class="text-sm text-white font-medium" lang="th">X12xa9RT&u=1</span>
+                                                <span class="text-sm text-white font-medium">X12xa9RT&u=1</span>
                                             </div>
-                                            <!-- <div class="flex justify-center items-center w-6 h-6">
+                                            <div class="flex justify-center items-center w-6 h-6">
                                                 <img
                                                     class="w-3 h-3"
                                                     src="public/icons/arrow-right.svg"
                                                     alt="Arrow" />
-                                            </div> -->
+                                            </div>
                                         </div>
                                     <?php endif ?>
                                     <?php if ($about['reg_status'] === 'accepted' && $about['att_status'] === 'accepted'): ?>

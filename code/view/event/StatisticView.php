@@ -17,14 +17,14 @@ function fetchEventStatistics($eventId)
             '2024-03-04' => 60,
         ],
         'regStatus' => [
-            'accepted' => 180,
-            'pending' => 50,
-            'rejected' => 20
+            'accepted' => 0,
+            'pending' => 0,
+            'reject' => 0
         ],
         'attStatus' => [
-            'accepted' => 180,
-            'pending' => 50,
-            'rejected' => 20
+            'accepted' => 0,
+            'pending' => 0,
+            'reject' => 0
         ]
     ];
 }
@@ -54,7 +54,7 @@ $navigate->setPath(
         <?php $navigate->render(); ?>
 
         <div class="flex flex-col gap-5 w-full max-w-[1200px] mx-auto">
-            <div class="w-full bg-white shadow-md rounded-lg p-6 min-h-[460px] flex flex-col">
+            <div class="w-full bg-white shadow-md rounded-lg p-6 min-h-fit flex flex-col">
                 <h2 class="text-xl font-semibold text-black mb-4">จำนวนผู้เข้าร่วมงาน</h2>
                 <div class="flex">
                     <canvas id="joinedChart" class="w-full h-1/2"></canvas>
@@ -62,14 +62,14 @@ $navigate->setPath(
             </div>
 
             <div class="flex flex-col md:flex-row gap-5">
-                <div class="w-full bg-white shadow-md rounded-lg p-6 min-h-[460px] flex flex-col">
+                <div class="w-full bg-white shadow-md rounded-lg p-6 min-h-fit flex flex-col">
                     <h2 class="text-xl font-semibold text-black mb-4">คำขอเข้าร่วม</h2>
                     <div class="flex">
                         <canvas id="regStatusChart" class="w-full h-1/2"></canvas>
                     </div>
                 </div>
 
-                <div class="w-full bg-white shadow-md rounded-lg p-6 min-h-[460px] flex flex-col">
+                <div class="w-full bg-white shadow-md rounded-lg p-6 min-h-fit flex flex-col">
                     <h2 class="text-xl font-semibold text-black mb-4">ลงทะเบียนเข้าร่วม</h2>
                     <div class="flex">
                         <canvas id="attendanceStatusChart" class="w-full h-1/2"></canvas>

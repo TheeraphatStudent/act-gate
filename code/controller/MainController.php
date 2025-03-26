@@ -40,6 +40,10 @@ class MainController
             unset($_SESSION['search']);
         }
 
+        if (isset($_SESSION['user']['userId'])) {
+            $allEvents = $event->queryAllEventByUserId($_SESSION['user']['userId']);
+        }
+
         require_once("./view/LandingView.php");
     }
 

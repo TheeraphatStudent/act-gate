@@ -6,6 +6,7 @@ require_once('components/search.php');
 require_once('components/calendar/calendar.php');
 require_once('components/texteditor/texteditor.php');
 require_once('utils/useTags.php');
+require_once('utils/useDateTime.php');
 
 use FinalProject\Components\Search;
 use FinalProject\Components\Filter;
@@ -58,7 +59,6 @@ $calendar = new SchedulerCalendar();
 
         </div>
     </div>
-
 
     <!-- Landing Content -->
     <div class="flex flex-col items-center w-full h-full min-h-fit gap-5 *:w-full *:h-full mt-8">
@@ -128,8 +128,8 @@ $calendar = new SchedulerCalendar();
                             </div>
 
                             <div class="flex flex-col w-full gap-1 font-kanit text-sm whitespace-nowrap text-primary leading-none font-normal">
-                                <span>เริ่มงาน: <?= date('d M Y, H:i', strtotime($item['start'])) ?></span>
-                                <span>สิ้นสุด: <?= date('d M Y, H:i', strtotime($item['end'])) ?></span>
+                                <span>เริ่มงาน: <?= dateFormat($item['start']) ?></span>
+                                <span>สิ้นสุด: <?= dateFormat($item['end']) ?></span>
                             </div>
 
                             <div class="flex items-center gap-2">
@@ -145,11 +145,29 @@ $calendar = new SchedulerCalendar();
                         </div>
 
                         <div class="flex flex-row justify-center items-center gap-2.5 w-full h-10">
-                            <a href="../?action=event.attendee&id=<?= $item['eventId'] ?>&joined=<?= $item['joined'] ?>" class="btn-primary max-h-10 w-full max-w-[80%]">
+                            <?php
+                            $statusMappings = [
+                                1 => ['class' => 'btn-warring', 'label' => 'รออนุมัติ'],
+                                2 => ['class' => 'btn-secondary', 'label' => 'อนุมัติแล้ว'],
+                                3 => ['class' => 'btn-gray', 'label' => 'เคยเข้าร่วมแล้ว'],
+                                4 => ['class' => 'btn-danger', 'label' => 'ถูกปฏิเสธ'],
+                            ];
+
+                            if (isset($item['haveBeenJoined']) && array_key_exists($item['haveBeenJoined'], $statusMappings)) {
+                                $buttonClass = $statusMappings[$item['haveBeenJoined']]['class'];
+                                $buttonLabel = $statusMappings[$item['haveBeenJoined']]['label'];
+                            } else {
+                                $buttonClass = 'btn-primary';
+                                $buttonLabel = 'ดูกิจกรรม';
+                            }
+                            ?>
+
+                            <a href="../?action=event.attendee&id=<?= htmlspecialchars($item['eventId']) ?>&joined=<?= htmlspecialchars($item['joined']) ?>" class="<?= htmlspecialchars($buttonClass) ?> max-h-10 w-full max-w-[80%]">
                                 <span class="font-kanit text-base text-white">
-                                    ดูกิจกรรม
+                                    <?= htmlspecialchars($buttonLabel) ?>
                                 </span>
                             </a>
+
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -181,14 +199,14 @@ $calendar = new SchedulerCalendar();
 
                     <!-- Text + Button -->
                     <div class="flex flex-col justify-center items-center md:items-start gap-3 text-center h-full md:text-left self-center">
-                        <div class="font-kanit text-2xl md:text-3xl text-teal-700 leading-tight font-normal">
+                        <div class="font-kanit text-2xl md:text-3xl text-primary leading-tight font-normal">
                             สร้าง<span class="font-bold">&nbsp;</span>
                             <a href="../?action=event.create" class="font-bold" style="text-decoration: underline;">กิจกรรม</a>
                             <span class="font-bold">&nbsp;</span>ของคุณได้ทันที
                         </div>
 
-                        <a href="../?action=event.create" class="mt-4 md:mt-0 flex justify-center items-center w-full md:w-[300px] h-[60px] rounded-lg shadow-md bg-sky-700 hover:bg-sky-800 transition">
-                            <span class="font-kanit text-[18px] text-white font-normal">
+                        <a href="../?action=event.create" class="mt-4 md:mt-0 flex justify-center items-center w-full md:w-[300px] h-[60px] rounded-lg shadow-md bg-secondary hover:bg-dark-secondary transition">
+                            <span class="font-kanit text-xl text-white font-normal">
                                 สร้างเลย
                             </span>
                         </a>

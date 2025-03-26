@@ -2,6 +2,8 @@
 
 namespace FinalProject;
 
+date_default_timezone_set('Asia/Bangkok');
+
 ini_set('session.cookie_secure', false);
 ini_set('session.cookie_httponly', true);
 ini_set('session.cookie_lifetime', (60 * 60));

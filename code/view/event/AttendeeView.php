@@ -3,8 +3,11 @@
 namespace FinalProject\View\Event;
 
 require_once('utils/useRegister.php');
+require_once('utils/useDateTime.php');
+
 require_once('components/texteditor/texteditor.php');
 
+use DateTime;
 use FinalProject\Components\TextEditor;
 use FinalProject\Utils\Register;
 
@@ -75,8 +78,8 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                                 เวลาจัดงาน
                             </div>
                             <div class="flex flex-col font-kanit text-base w-full h-full gap-2 whitespace-nowrap text-gray-500 text-opacity-100 leading-none font-normal">
-                                <span>เริ่มงาน: <?= $eventObj['start'] ?></span>
-                                <span>สิ้นสุด: <?= $eventObj['end'] ?></span>
+                                <span>เริ่มงาน: <?= dateFormat($eventObj['start']) ?></span>
+                                <span>สิ้นสุด: <?= dateFormat($eventObj['end']) ?></span>
                             </div>
                         </div>
 
@@ -116,16 +119,27 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
 
                                     // print_r($status);
 
-                                    foreach ($buttons[$status] as $button) {
-                                        echo "<button type='button' class='{$button['class']}' id='{$button['id']}'><span>{$button['label']}</span></button>";
+                                    if (new DateTime() < new DateTime($eventObj['start'])) {
+                                    ?>
+                                        <button type='button' class='btn-gray' id=''><span>ยังไม่ถึงเวลาเข้าร่วม</span></button>
+                                    <?php
+                                    } elseif (new DateTime() > new DateTime($eventObj['end'])) {
+                                    ?>
+                                        <button type='button' class='btn-gray' id=''><span>หมดเวลาเข้าร่วม</span></button>
+                                    <?php
+                                    } else {
+                                        foreach ($buttons[$status] as $button) {
+                                            echo "<button type='button' class='{$button['class']}' id='{$button['id']}'><span>{$button['label']}</span></button>";
+                                        }
+
                                     }
+
 
                                     unset($regObj['data']);
                                     ?>
 
                                 <?php else : ?>
                                     <a href="../?action=login" class="btn-gray">เข้าสู่ระบบก่อน</a>
-
                                 <?php endif ?>
                             </form>
                             <!-- <a href="#" class="btn-primary-outline w-full group no-underline">
@@ -173,8 +187,8 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
             <div class="flex flex-col justify-start items-start gap-5 w-full h-fit lg:w-1/2 relative">
                 <h1 class="text-white font-semibold">เวลาจัดงาน</h1>
                 <div class="flex flex-col font-kanit text-base w-full h-full gap-2 whitespace-nowrap text-light-green text-opacity-100 leading-none font-normal">
-                    <span>เริ่มงาน: <?= date('d M Y, H:i', strtotime($eventObj['start'])) ?></span>
-                    <span>สิ้นสุด: <?= date('d M Y, H:i', strtotime($eventObj['end'])) ?></span>
+                    <span>เริ่มงาน: <?= dateFormat($eventObj['start']) ?></span>
+                    <span>สิ้นสุด: <?= dateFormat($eventObj['end']) ?></span>
                 </div>
             </div>
 
