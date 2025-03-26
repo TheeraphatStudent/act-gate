@@ -89,6 +89,7 @@ class MainController
         $eventModel = new Event($this->connection);
         $regModel = new Registration($this->connection);
         $attModel = new Attendance($this->connection);
+        $userModel = new User($this->connection);
 
         $eventId = isset($_GET['id']) ? $_GET['id'] : null;
         $userId = isset($_SESSION['user']) ? $_SESSION['user']['userId'] : null;
@@ -105,6 +106,7 @@ class MainController
                 case 'attendee':
                     $regObj = $regModel->getRegisterById(userId: $userId, eventId: $eventId);
                     $eventObj = $eventModel->getEventById($eventId);
+                    $organizeInfo = ($userModel->getUserByUserId($eventObj['organizeId']))['user']; 
 
                     require_once("./view/event/AttendeeView.php");
                     break;

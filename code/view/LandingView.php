@@ -107,7 +107,7 @@ $calendar = new SchedulerCalendar();
                             </div>
 
                             <!-- Organize Detail -->
-                            <div class="flex flex-row justify-start items-center gap-2.5 px-2.5 py-2 pt-6 w-full h-fit bg-gradient-to-t from-dark-primary/75 via-dark-primary/25 to-transparent">
+                            <div class="flex flex-row justify-start items-center gap-2.5 px-2.5 py-2 pt-6 w-full h-fit bg-gradient-to-t from-dark-primary/75 via-dark-primary/25 to-transparent overflow-hidden">
                                 <div class="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-primary text-white text-sm font-bold">
                                     <?= htmlspecialchars(strtoupper(substr(($item['organizeName'] ?? "-"), 0, 1))) ?>
                                 </div>

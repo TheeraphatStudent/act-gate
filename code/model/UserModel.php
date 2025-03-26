@@ -72,7 +72,6 @@ class User
         return ["isFound" => false, "user" => [], "status" => 404];
     }
 
-
     public function register($username, $password, $email)
     {
         try {

@@ -34,7 +34,7 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
 <body class="bg-primary">
     <div
         class="flex flex-col justify-center items-center gap-12 py-[200px] pr-10 pl-10 w-full h-fit">
-        <div class="flex flex-col justify-start items-center gap-6 w-full shadow-sm p-4">
+        <section class="flex flex-col justify-start items-center gap-6 w-full shadow-sm p-4">
             <div
                 class="relative flex flex-col lg:flex-row justify-between items-end lg:items-center py-6 px-6 lg:px-8 gap-6 lg:gap-10 w-full max-w-[1650px] h-auto lg:h-[700px] rounded-3xl bg-cover bg-center overflow-hidden"
                 style="background-image: url('public/images/uploads/<?= $eventObj['cover'] ?>');">
@@ -131,7 +131,6 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                                         foreach ($buttons[$status] as $button) {
                                             echo "<button type='button' class='{$button['class']}' id='{$button['id']}'><span>{$button['label']}</span></button>";
                                         }
-
                                     }
 
 
@@ -152,10 +151,10 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                 <!-- Cover -->
                 <div class="absolute inset-0 bg-black/60 backdrop-blur-sm z-1"></div>
             </div>
-        </div>
+        </section>
 
         <!-- Detail -->
-        <div class="flex flex-col justify-start items-start gap-12 lg:gap-24 w-full max-w-[1200px] h-fit p-4" id="detail-section">
+        <section class="flex flex-col justify-start items-start gap-12 lg:gap-24 w-full max-w-[1200px] h-fit p-4" id="detail-section">
             <div class="flex w-full max-w-content h-full overflow-auto gap-8" id="imageContainer">
                 <?php foreach (json_decode($eventObj['morePics'], true) as $item) : ?>
                     <div class="flex bg-dark-primary h-[180px] min-w-[320px] bg-cover bg-center rounded-lg"
@@ -191,53 +190,72 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                     <span>สิ้นสุด: <?= dateFormat($eventObj['end']) ?></span>
                 </div>
             </div>
+        </section>
 
-        </div>
+        <section class="flex flex-col items-center justify-center gap-2 mt-20 card w-full hover:cursor-pointer hover:scale-[101%]">
+            <div class="w-16 h-16 flex items-center justify-center rounded-full bg-primary text-white text-xl font-bold">
+                <?= htmlspecialchars(strtoupper(substr($organizeInfo['name'], 0, 1))) ?>
+            </div>
+
+            <span> <?= htmlspecialchars($organizeInfo['name']) ?> </span>
+
+            <div class="flex w-full gap-4 mt-2 *:bg-dark-primary/40">
+                <div class="flex flex-col w-full rounded-lg py-2 px-4 text-center">
+                    <p class="text-xl font-bold text-white"><?= $organizeInfo['total_events_created'] ?></p>
+                    <span class="text-sm text-white">อีเวนท์ที่สร้าง</span>
+                </div>
+                <div class="flex flex-col w-full rounded-lg py-2 px-4 text-center">
+                    <p class="text-xl font-bold text-white"><?= $organizeInfo['total_events_joined'] ?></p>
+                    <span class="text-sm text-white">อีเวนท์ที่เข้าร่วม</span>
+                </div>
+            </div>
+        </section>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const status = <?= $_GET['status'] ?>;
+        <?php if (isset($_GET['status'])) : ?>
+            document.addEventListener('DOMContentLoaded', () => {
+                const status = <?= $_GET['status'] ?>;
 
-            const url = new URL(window.location.href);
-            url.searchParams.delete("status");
-            window.history.replaceState({}, document.title, url.toString());
+                const url = new URL(window.location.href);
+                url.searchParams.delete("status");
+                window.history.replaceState({}, document.title, url.toString());
 
-            switch (status) {
-                case 409:
-                    Swal.fire({
-                        title: "เกิดข้อผิดพลาด",
-                        text: "คุณเป็นผู้สร้างกิจกรรม, คุณมีสิทธิ์เข้าร่วมอยู่แล้ว",
-                        icon: "error",
-                        timerProgressBar: true,
-                        timer: 3500,
-                        confirmButtonText: "ปิด"
-                    });
-                    break;
-                case 403:
-                    Swal.fire({
-                        title: "เกิดข้อผิดพลาด",
-                        text: "ดูเหมือนว่าคุณยังไม่ได้ยืนยันตัวตน",
-                        icon: "warning",
-                        showDenyButton: true,
-                        confirmButtonText: "ยืนยันตอนนี้",
-                        denyButtonText: "ยังก่อน"
-                    }).then((res) => {
-                        if (res.isConfirmed) {
-                            window.location.href = "../?action=profile&isEdit=true";
+                switch (status) {
+                    case 409:
+                        Swal.fire({
+                            title: "เกิดข้อผิดพลาด",
+                            text: "คุณเป็นผู้สร้างกิจกรรม, คุณมีสิทธิ์เข้าร่วมอยู่แล้ว",
+                            icon: "error",
+                            timerProgressBar: true,
+                            timer: 3500,
+                            confirmButtonText: "ปิด"
+                        });
+                        break;
+                    case 403:
+                        Swal.fire({
+                            title: "เกิดข้อผิดพลาด",
+                            text: "ดูเหมือนว่าคุณยังไม่ได้ยืนยันตัวตน",
+                            icon: "warning",
+                            showDenyButton: true,
+                            confirmButtonText: "ยืนยันตอนนี้",
+                            denyButtonText: "ยังก่อน"
+                        }).then((res) => {
+                            if (res.isConfirmed) {
+                                window.location.href = "../?action=profile&isEdit=true";
 
-                        }
+                            }
 
-                    });
-                    break;
+                        });
+                        break;
 
-                default:
-                    break;
-            }
+                    default:
+                        break;
+                }
 
-        })
+            })
+        <?php endif ?>
     </script>
 
     <script>
