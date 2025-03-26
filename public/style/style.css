@@ -1141,6 +1141,10 @@ span{
   margin-top: 1.25rem;
 }
 
+.mt-1\.5{
+  margin-top: 0.375rem;
+}
+
 .block{
   display: block;
 }
@@ -2290,6 +2294,11 @@ span{
 .bg-yellow{
   --tw-bg-opacity: 1;
   background-color: rgb(255 193 69 / var(--tw-bg-opacity, 1));
+}
+
+.bg-blue-500{
+  --tw-bg-opacity: 1;
+  background-color: rgb(59 130 246 / var(--tw-bg-opacity, 1));
 }
 
 .bg-opacity-50{

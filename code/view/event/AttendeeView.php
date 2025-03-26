@@ -41,7 +41,7 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                 <!-- Left Section -->
                 <div class="flex flex-col justify-start items-start h-auto lg:h-[620px] w-full lg:w-auto z-10">
                     <!-- Back Button -->
-                    <a href="../" class="flex flex-row justify-center items-center gap-2 py-2 px-4 rounded-lg h-11 shadow-sm bg-orange-50 min-w-[119px]">
+                    <a href="../" class="flex flex-row justify-center items-center gap-2 py-2 px-4 rounded-lg h-11 shadow-sm bg-white min-w-[119px]">
                         <img width="16px" height="16px" src="public/icons/drop.svg" alt="Back" class="transform rotate-90" />
                         <span class="font-kanit text-lg min-w-[72px] whitespace-nowrap text-teal-700 text-opacity-100 text-center leading-none font-light">
                             ย้อนกลับ
@@ -233,34 +233,36 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                 </button>
             </div>
 
-            <div class="h-[400px] rounded-md overflow-y-auto">
+            <!-- Ticket -->
+            <div id="ticket-canvas" class="h-[400px] rounded-md overflow-y-auto">
                 <section class="flex relative flex-col p-5 w-full">
                     <img
-                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/84b74064b3c7fb5518c3a8edb49980b6cb6dfb39?placeholderIfAbsent=true&apiKey=529d5ad9e15745e397b7b5df4f8f9ef8"
+                        src="public/images/tickets.svg"
                         class="object-cover absolute inset-0 size-full"
                         alt="Ticket background" />
 
                     <section
-                        class="flex relative gap-2.5 justify-center items-center text-base text-center text-orange-50">
-                        <div class="flex flex-col items-center self-stretch my-auto">
+                        class="flex relative gap-2.5 justify-center items-center text-base text-center text-white">
+                        <div class="flex flex-col gap-1 items-center self-stretch my-auto">
                             <img
-                                src="https://cdn.builder.io/api/v1/image/assets/TEMP/5ec5ae4f426207f473149a9296d01f593fbcfe6d?placeholderIfAbsent=true&apiKey=529d5ad9e15745e397b7b5df4f8f9ef8"
-                                class="object-contain aspect-square w-[24px]"
+                                src="public/images/white-logo.svg"
+                                class="object-cover aspect-square w-12"
                                 alt="ACT GATE logo" />
-                            <span class="mt-2.5">ACT GATE</span>
+                            <span>ACT GATE</span>
                         </div>
                     </section>
 
                     <section
-                        class="flex relative flex-col justify-center self-center mt-4 w-full text-base font-medium text-center text-orange-50 max-w-[310px]">
-                        <div
-                            class="flex self-center bg-white aspect-square min-h-[210px] w-[210px]"
-                            aria-label="QR Code"></div>
+                        class="flex relative flex-col justify-center self-center mt-4 w-full text-base font-medium text-center text-white max-w-[310px]">
+                        <div id="ticket-code" class="flex self-center bg-white aspect-square min-h-[210px] w-[210px]" aria-label="QR Code"></div>
+
                         <p class="mt-2.5"><?= htmlspecialchars($_SESSION['user']['name'] ?? '???') ?></p>
                     </section>
 
-                    <div class="flex items-center justify-center rounded-full bg-primary text-white text-[36px] font-bold border-2 border-white object-contain self-center mt-4 max-w-full aspect-square w-[100px] z-10">
-                        <span><?= htmlspecialchars(strtoupper(substr(($_SESSION['user']['username'] ?? '?'), 0, 1))) ?></span>
+                    <div class="relative flex items-center justify-center rounded-full bg-primary text-white text-[36px] font-bold border-2 border-white object-contain self-center mt-4 max-w-full aspect-square w-[100px] z-[50]">
+                        <span class="flex items-center justify-center">
+                            <?= htmlspecialchars(strtoupper(substr(($_SESSION['user']['username'] ?? '?'), 0, 1))) ?>
+                        </span>
                     </div>
 
                     <section class="flex relative flex-col mt-2 p-4">
@@ -280,10 +282,10 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                 </section>
             </div>
 
-            <a href="../?action=login" class="btn-primary-outline mt-5">
+            <button type="button" id="downloadTickets" class="btn-primary-outline mt-5">
                 <img src="public/icons/" alt="">
                 <span>ดาวน์โหลดบัตร</span>
-            </a>
+            </button>
         </div>
     </div>
 
@@ -333,16 +335,38 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
         <?php endif ?>
     </script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const registerButton = document.getElementById("registerEvent");
             const rejectButton = document.getElementById("rejectEvent");
 
             const ticketBtn = document.getElementById('acceptEvent');
+            const downloadTicketBtn = document.getElementById('downloadTickets');
 
             if (ticketBtn) {
-                ticketBtn.addEventListener('click', () => {
+                downloadTicketBtn.addEventListener('click', () => {
+                    const ticketDiv = document.getElementById('ticket-canvas');
 
+                    const originalOverflow = ticketDiv.style.overflow;
+                    const originalHeight = ticketDiv.style.height;
+
+                    ticketDiv.style.overflow = 'visible';
+                    ticketDiv.style.height = 'auto';
+
+                    html2canvas(ticketDiv).then(canvas => {
+                        ticketDiv.style.overflow = originalOverflow;
+                        ticketDiv.style.height = originalHeight;
+
+                        const link = document.createElement('a');
+                        link.download = 'U_<?= $userId ?>-E_<?= $eventId ?>-ticket.png';
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                    }).catch(error => {
+                        ticketDiv.style.overflow = originalOverflow;
+                        ticketDiv.style.height = originalHeight;
+                        console.error('Error capturing ticket:', error);
+                    });
 
                 })
 
