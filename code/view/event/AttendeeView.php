@@ -90,9 +90,7 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                                 method="post"
                                 class="flex flex-col gap-2.5"
                                 id="regForm">
-                                <?php if (($_GET['joined']) >= $eventObj['maximum']): ?>
-                                    <button type="button" class="btn-gray">เต็ม</button>
-                                <?php elseif (!empty($_SESSION['user']) && isset($_SESSION['user']['userId'])): ?>
+                                <?php if (!empty($_SESSION['user']) && isset($_SESSION['user']['userId'])): ?>
                                     <input type="hidden" name="eventId" value="<?= htmlspecialchars($eventObj['eventId']) ?>">
                                     <input type="hidden" name="joined" value="<?= (isset($_GET['joined']) ? $_GET['joined'] : 0) ?>">
                                     <input type="hidden" name="userId" value="<?= htmlspecialchars($_SESSION['user']['userId']) ?>">
@@ -111,6 +109,9 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                                         ],
                                         'default' => [
                                             ['class' => 'btn-primary w-full', 'label' => 'เข้าร่วม', 'id' => 'registerEvent']
+                                        ],
+                                        'full' => [
+                                            ['class' => 'btn-gray w-full', 'label' => 'เต็ม', 'id' => '']
                                         ]
                                     ];
 
@@ -128,11 +129,17 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                                         <button type='button' class='btn-gray' id=''><span>หมดเวลาเข้าร่วม</span></button>
                                     <?php
                                     } else {
-                                        foreach ($buttons[$status] as $button) {
-                                            echo "<button type='button' class='{$button['class']}' id='{$button['id']}'><span>{$button['label']}</span></button>";
+                                        if (!isset($regObj['data']['status']) && $_GET['joined'] >= $eventObj['maximum']) {
+                                            foreach ($buttons['full'] as $button) {
+                                                echo "<button type='button' class='{$button['class']}' id='{$button['id']}'><span>{$button['label']}</span></button>";
+                                            }
+                                        } else {
+                                            foreach ($buttons[$status] as $button) {
+                                                echo "<button type='button' class='{$button['class']}' id='{$button['id']}'><span>{$button['label']}</span></button>";
+                                            }
+                                        
                                         }
                                     }
-
 
                                     unset($regObj['data']);
                                     ?>
