@@ -4,6 +4,7 @@ namespace FinalProject\View\Event;
 
 require_once('utils/useRegister.php');
 require_once('utils/useDateTime.php');
+require_once('utils/useTags.php');
 
 require_once('components/texteditor/texteditor.php');
 
@@ -41,7 +42,7 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                 <!-- Left Section -->
                 <div class="flex flex-col justify-start items-start h-auto lg:h-[620px] w-full lg:w-auto z-10">
                     <!-- Back Button -->
-                    <a href="../" class="flex flex-row justify-center items-center gap-2 py-2 px-4 rounded-lg h-11 shadow-sm bg-orange-50 min-w-[119px]">
+                    <a href="../" class="flex flex-row justify-center items-center gap-2 py-2 px-4 rounded-lg h-11 shadow-sm bg-white min-w-[119px]">
                         <img width="16px" height="16px" src="public/icons/drop.svg" alt="Back" class="transform rotate-90" />
                         <span class="font-kanit text-lg min-w-[72px] whitespace-nowrap text-teal-700 text-opacity-100 text-center leading-none font-light">
                             ย้อนกลับ
@@ -96,52 +97,38 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                                     <input type="hidden" name="userId" value="<?= htmlspecialchars($_SESSION['user']['userId']) ?>">
 
                                     <?php
-                                    $buttons = [
-                                        'accepted' => [
-                                            ['class' => 'btn-primary w-full', 'label' => 'แสดงบัตร', 'id' => 'acceptEvent'],
-                                            ['class' => 'btn-primary-outline w-full', 'label' => 'ดาวน์โหลดบัตร', 'id' => 'downloadTicket']
-                                        ],
-                                        'pending' => [
-                                            ['class' => 'btn-warring w-full', 'label' => 'รออนุมัติ', 'id' => 'pendingEvent']
-                                        ],
-                                        'reject' => [
-                                            ['class' => 'btn-danger w-full', 'label' => 'ดูเหตุผล', 'id' => 'rejectEvent']
-                                        ],
-                                        'default' => [
-                                            ['class' => 'btn-primary w-full', 'label' => 'เข้าร่วม', 'id' => 'registerEvent']
-                                        ],
-                                        'full' => [
-                                            ['class' => 'btn-gray w-full', 'label' => 'เต็ม', 'id' => '']
-                                        ]
-                                    ];
 
-                                    $status = (isset($regObj['data']['status']) ? trim($regObj['data']['status']) : null) ?? 'default';
+                                    $status = (isset($regObj['status']) ? trim($regObj['status']) : null) ?? 'default';
                                     $status = in_array($status, Register::REGISTER_STATUS) ? $status : 'default';
 
-                                    // print_r($status);
+                                    // print_r($eventId);
+                                    // echo '<br>';
+                                    // print_r($userId);
+                                    // echo '<br>';
+                                    // print_r($regObj);
 
-                                    if (new DateTime() < new DateTime($eventObj['start'])) {
-                                    ?>
-                                        <button type='button' class='btn-gray' id=''><span>ยังไม่ถึงเวลาเข้าร่วม</span></button>
-                                    <?php
-                                    } elseif (new DateTime() > new DateTime($eventObj['end'])) {
+                                    if (new DateTime() > new DateTime($eventObj['end'])) {
                                     ?>
                                         <button type='button' class='btn-gray' id=''><span>หมดเวลาเข้าร่วม</span></button>
                                     <?php
                                     } else {
-                                        if (!isset($regObj['data']['status']) && $_GET['joined'] >= $eventObj['maximum']) {
-                                            foreach ($buttons['full'] as $button) {
+                                        if (!isset($regObj['status']) && $_GET['joined'] >= $eventObj['maximum']) {
+                                            foreach ($attButtons['full'] as $button) {
                                                 echo "<button type='button' class='{$button['class']}' id='{$button['id']}'><span>{$button['label']}</span></button>";
                                             }
-                                        } else {
-                                            foreach ($buttons[$status] as $button) {
+                                        } elseif ((isset($_SESSION['user']['userId']) && $eventObj['organizeId'] === $_SESSION['user']['userId'])) {
+                                            foreach ($attButtons['owned'] as $button) {
                                                 echo "<button type='button' class='{$button['class']}' id='{$button['id']}'><span>{$button['label']}</span></button>";
                                             }
-                                        
+                                        } 
+                                        else {
+                                            foreach ($attButtons[$status] as $button) {
+                                                echo "<button type='button' class='{$button['class']}' id='{$button['id']}'><span>{$button['label']}</span></button>";
+                                            }
                                         }
                                     }
 
-                                    unset($regObj['data']);
+                                    // unset($regObj);
                                     ?>
 
                                 <?php else : ?>
@@ -209,7 +196,7 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
             <div class="flex w-full gap-4 mt-2 *:bg-dark-primary/40">
                 <div class="flex flex-col w-full rounded-lg py-2 px-4 text-center">
                     <p class="text-xl font-bold text-white"><?= $organizeInfo['total_events_created'] ?></p>
-                    <span class="text-sm text-white">อีเวนท์ที่สร้าง</span>
+                    <span class="text-sm text-white">อีเวนท์ที่สร้าง</span>s
                 </div>
                 <div class="flex flex-col w-full rounded-lg py-2 px-4 text-center">
                     <p class="text-xl font-bold text-white"><?= $organizeInfo['total_events_joined'] ?></p>
@@ -217,6 +204,73 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                 </div>
             </div>
         </section>
+    </div>
+
+    <div id="ticketModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] mt-24 hidden">
+        <div class="bg-white shadow-2xl rounded-xl w-full max-w-[350px] p-5 h-fit *:w-full">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-kanit text-center w-full text-dark-secondary">บัตรเข้างานของคุณ</h3>
+                <button type="button" id="closeModalBtn" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Ticket -->
+            <div id="ticket-canvas" class="h-[400px] rounded-md overflow-y-auto hover:scale-105">
+                <section class="flex relative flex-col p-5 w-full">
+                    <img
+                        src="public/images/tickets.svg"
+                        class="object-cover absolute inset-0 size-full"
+                        alt="Ticket background" />
+
+                    <section
+                        class="flex relative gap-2.5 justify-center items-center text-base text-center text-white">
+                        <div class="flex flex-col gap-1 items-center self-stretch my-auto">
+                            <img
+                                src="public/images/white-logo.svg"
+                                class="object-cover aspect-square w-12"
+                                alt="ACT GATE logo" />
+                            <span>ACT GATE</span>
+                        </div>
+                    </section>
+
+                    <section
+                        class="flex relative flex-col justify-center self-center mt-4 w-full text-base font-medium text-center text-white max-w-[310px]">
+                        <div id="ticket-code" class="bg-dark-primary flex self-center aspect-square min-h-[225px] w-[225px]" aria-label="QR Code"></div>
+
+                        <p class="mt-2.5"><?= htmlspecialchars($_SESSION['user']['name'] ?? '???') ?></p>
+                    </section>
+
+                    <div class="relative flex items-center justify-center rounded-full bg-primary text-white text-[36px] font-bold border-2 border-white object-contain self-center mt-4 max-w-full aspect-square w-[100px] z-[50]">
+                        <span class="flex items-center justify-center">
+                            <?= htmlspecialchars(strtoupper(substr(($_SESSION['user']['username'] ?? '?'), 0, 1))) ?>
+                        </span>
+                    </div>
+
+                    <section class="flex relative flex-col mt-2 p-4">
+                        <h2 class="text-2xl font-bold text-center text-white mb-2"><?= htmlspecialchars($eventObj['title']) ?></h2>
+
+                        <div class="flex flex-col items-center gap-4">
+                            <div class="flex flex-col items-center gap-1.5">
+                                <h3 class="text-lg font-semibold text-amber-100">ช่วงเวลางาน</h3>
+                                <div class="flex flex-col items-start font-kanit text-sm text-white leading-none font-normal">
+                                    <span class="font-medium">เริ่มงาน: <span class="font-kanit font-light text-sm"><?= dateFormat($eventObj['start']) ?></span></span>
+                                    <span class="font-medium">สิ้นสุด: <span class="font-kanit font-light text-sm"><?= dateFormat($eventObj['end']) ?></span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                </section>
+            </div>
+
+            <button type="button" id="downloadTickets" class="btn-primary-outline mt-5">
+                <img src="public/icons/" alt="">
+                <span>ดาวน์โหลดบัตร</span>
+            </button>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -243,10 +297,10 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                     case 403:
                         Swal.fire({
                             title: "เกิดข้อผิดพลาด",
-                            text: "ดูเหมือนว่าคุณยังไม่ได้ยืนยันตัวตน",
+                            text: "จำเป็นต้องกรอกข้อมูลส่วนตัวให้เรียบร้อย",
                             icon: "warning",
                             showDenyButton: true,
-                            confirmButtonText: "ยืนยันตอนนี้",
+                            confirmButtonText: "เพิ่มข้อมูลตอนนี้",
                             denyButtonText: "ยังก่อน"
                         }).then((res) => {
                             if (res.isConfirmed) {
@@ -265,10 +319,108 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
         <?php endif ?>
     </script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const registerButton = document.getElementById("registerEvent");
             const rejectButton = document.getElementById("rejectEvent");
+
+            const ticketModal = document.getElementById('ticketModal');
+
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const ticketBtn = document.getElementById('acceptEvent');
+            const downloadTicketBtn = document.getElementById('downloadTickets');
+
+            if (ticketBtn) {
+                ticketBtn.addEventListener('click', () => {
+                    ticketModal.classList.toggle('hidden')
+
+                })
+
+                closeModalBtn.addEventListener('click', () => {
+                    ticketModal.classList.toggle('hidden')
+
+                })
+
+                // ================================================
+
+                function generateQRCode(element, data, options = {}) {
+                    element.innerHTML = '';
+
+                    const defaultOptions = {
+                        width: 225,
+                        height: 225,
+                        colorDark: '#232323',
+                        colorLight: '#226E6A',
+                        // L (7%), M (15%), Q (25%), and H (30%)
+                        correctLevel: QRCode.CorrectLevel.L
+                    };
+
+                    const mergedOptions = {
+                        ...defaultOptions,
+                        ...options
+                    };
+
+                    new QRCode(element, {
+                        text: data,
+                        width: mergedOptions.width,
+                        height: mergedOptions.height,
+                        colorDark: mergedOptions.colorDark,
+                        colorLight: mergedOptions.colorLight,
+                        correctLevel: mergedOptions.correctLevel
+                    });
+                }
+
+                const ticketCode = document.getElementById('ticket-code');
+
+                const ticketData = JSON.stringify({
+                    userId: '<?= $_SESSION['user']['userId'] ?>',
+                    regId: '<?= $regObj['regId'] ?>',
+                    eventId: '<?= $eventObj['eventId'] ?>'
+                });
+
+                <?php  unset($regObj); ?>
+
+                // generateQRCode(ticketCode, ticketData, {
+                //     colorDark: '#FBF8EE',
+                //     colorLight: '#104B48'
+                // });
+
+                if (ticketCode) {
+                    generateQRCode(ticketCode, ticketData);
+
+                }
+
+                // ================================================
+
+                downloadTicketBtn.addEventListener('click', () => {
+                    const ticketDiv = document.getElementById('ticket-canvas');
+
+                    const originalOverflow = ticketDiv.style.overflow;
+                    const originalHeight = ticketDiv.style.height;
+
+                    ticketDiv.style.overflow = 'visible';
+                    ticketDiv.style.height = 'auto';
+
+                    html2canvas(ticketDiv).then(canvas => {
+                        ticketDiv.style.overflow = originalOverflow;
+                        ticketDiv.style.height = originalHeight;
+
+                        const link = document.createElement('a');
+                        link.download = 'U_<?= $userId ?>-E_<?= $eventId ?>-ticket.png';
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                    }).catch(error => {
+                        ticketDiv.style.overflow = originalOverflow;
+                        ticketDiv.style.height = originalHeight;
+                        console.error('Error capturing ticket:', error);
+                    });
+
+                })
+
+            }
+
             const form = document.getElementById('regForm');
 
             if (registerButton) {

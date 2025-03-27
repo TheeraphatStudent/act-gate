@@ -105,7 +105,8 @@ class MainController
                     break;
 
                 case 'attendee':
-                    $regObj = $regModel->getRegisterById(userId: $userId, eventId: $eventId);
+
+                    $regObj = ($regModel->getRegisterById(userId: $userId, eventId: $eventId))['data'];
                     $eventObj = $eventModel->getEventById($eventId);
                     $organizeInfo = ($userModel->getUserByUserId($eventObj['organizeId']))['user'];
 
@@ -133,7 +134,9 @@ class MainController
                     break;
 
                 case 'statistic':
-                    // $allUserReg = $regModel->getUserRegisterByEventAndUserId(userId: $userId, eventId: $eventId);
+                    $joinedDateContainer = ($eventModel->getJoinedDateById(eventId: $eventId))['data'];
+
+                    $joinedStatistics = array_combine(array_column($joinedDateContainer, 'joinedDate'),  array_column($joinedDateContainer, 'totalJoined'));
 
                     // require_once("./view/event/statistic.php");
                     require_once("./view/event/StatisticView.php");
@@ -144,6 +147,7 @@ class MainController
         }
     }
 
+    // ใช้เพื่อดึงข้อมูล
     public function request(array $target, array $data = [])
     {
         // print_r($target);

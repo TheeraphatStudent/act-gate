@@ -22,6 +22,10 @@ class Tags extends Component
             "text" => "text-primary",
             "background" => "bg-light-green"
         ],
+        'attended' => [
+            "text" => "text-secondary",
+            "background" => "bg-light-secondary"
+        ],
     ];
 
     public function __construct($text)

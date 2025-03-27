@@ -125,7 +125,10 @@ class User
 
         if ($user && password_verify($password, $user['password'])) {
             $user = array_diff_key($user, array_flip(['username', 'password']));
-            $result = $user['userId'];
+            $result = [
+                "userId" => $user['userId'],
+                "name" => $user['name']
+            ];
         }
 
         return $result;

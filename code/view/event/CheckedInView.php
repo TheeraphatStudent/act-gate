@@ -4,10 +4,13 @@ namespace FinalProject\View\Event;
 
 require_once('components/tags.php');
 require_once('components/breadcrumb.php');
+require_once('components/camera/camera.php');
+
 require_once('utils/useDateTime.php');
 
 use FinalProject\Components\Breadcrumb;
 use FinalProject\Components\Tags;
+use FinalProject\Components\QrCodeReader;
 
 $navigate = new Breadcrumb();
 
@@ -15,6 +18,8 @@ $navigate->setPath(
     data: ['Dashboard', 'จัดการผู้เข้าร่วม', $_GET['id']],
     prevPath: '?action=event.manage'
 );
+
+$qrreader = new QrCodeReader();
 
 ?>
 
@@ -33,7 +38,6 @@ $navigate->setPath(
     <div class="flex flex-col gap-10 w-full max-w-content">
         <?php
         $navigate->render();
-        // $qrreader->render();
         ?>
 
         <div style='border-bottom: 2px solid #FBF8EE'>
@@ -65,13 +69,21 @@ $navigate->setPath(
                                     <td class="py-3 px-4 text-sm font-medium max-w-[150px]"><?= $item['name'] ?? "-" ?></td>
                                     <td class="py-3 px-4 text-sm font-medium max-w-[150px]"><?= $item['gender'] ?? "-" ?></td>
                                     <td class="py-3 px-4 text-left"> <?= !empty($item['birth']) ? ageCalculator(birth: $item['birth']) : "-" ?> </td>
-                                    <td class="py-3 px-4 text-sm font-medium max-w-[150px]"><?= (new Tags($item['status']))->render() ?></td>
+                                    <td class="py-3 px-4 text-sm font-medium max-w-[150px]">
+                                        <?php
+                                        if ($item['status'] == 'accepted' && $item['attStatus'] == 'accepted') {
+                                            (new Tags('attended'))->render();
+                                        } else {
+                                            (new Tags($item['status']))->render();
+                                        }
+                                        ?>
+                                    </td>
                                     <td>
                                         <div class="flex justify-center items-center space-x-2 *:mb-0">
-                                            <button type="button" class="p-1.5 rounded-full text-red hover:bg-light-red <?= $item['status'] == "reject" ? 'hidden' : '' ?>" id="reject">
+                                            <button type="button" class="p-1.5 rounded-full text-red hover:bg-light-red <?= ($item['status'] == "reject") || ($item['status'] == 'accepted' && $item['attStatus'] == 'accepted') ? 'hidden' : '' ?>" id="regReject">
                                                 <img class="w-4 h-4" src="public/icons/reject.png" alt="reject">
                                             </button>
-                                            <form action="..?action=request&on=reg&form=accept" class="<?= $item['status'] == "accepted" ? 'hidden' : '' ?>" method="post">
+                                            <form action="..?action=request&on=reg&form=accept" class="<?= ($item['status'] == "accepted") ? 'hidden' : '' ?>" method="post">
                                                 <input type="hidden" name="userId" value="<?= $item['userId'] ?>">
                                                 <input type="hidden" name="regId" value="<?= $item['regId'] ?>">
                                                 <input type="hidden" name="eventId" value="<?= $_GET['id'] ?>">
@@ -133,6 +145,10 @@ $navigate->setPath(
             </div>
         </div>
 
+        <div id="qrreader-container" class="hidden">
+            <?php $qrreader->render(); ?>
+        </div>
+
         <!-- Checked In -->
         <div id="checkedin-table" class="bg-white rounded-lg shadow-lg overflow-hidden hidden">
             <div class="overflow-x-auto">
@@ -163,7 +179,7 @@ $navigate->setPath(
                                                 <input type="hidden" name="regId" value="<?= $item['regId'] ?>">
                                                 <input type="hidden" name="eventId" value="<?= $item['eventId'] ?>">
 
-                                                <button type="button" class="p-1.5 rounded-full text-red hover:bg-light-red <?= ($item['status'] == "pending") ? '' : 'hidden' ?>" id="reject">
+                                                <button type="button" class="p-1.5 rounded-full text-red hover:bg-light-red <?= ($item['status'] == "pending") ? '' : 'hidden' ?>" id="attReject">
                                                     <img class="w-4 h-4" src="public/icons/reject.png" alt="reject">
                                                 </button>
                                             </form>
@@ -200,6 +216,8 @@ $navigate->setPath(
         </div>
     </div>
 
+    
+
     <!-- Table Management -->
     <script>
         const approvedTab = document.getElementById("approved-tab");
@@ -208,12 +226,18 @@ $navigate->setPath(
         const approvedTable = document.getElementById("approved-table");
         const checkedInTable = document.getElementById("checkedin-table");
 
+        const qrContainer = document.getElementById("qrreader-container");
+
         function showApprovedTable() {
             approvedTable.classList.remove("hidden");
             checkedInTable.classList.add("hidden");
 
             approvedTab.classList.add("active-tab");
             checkedInTab.classList.remove("active-tab");
+
+            qrContainer.classList.add('hidden');
+
+            localStorage.setItem('activeTab', 'approve')
         }
 
         function showCheckedInTable() {
@@ -222,16 +246,34 @@ $navigate->setPath(
 
             checkedInTab.classList.add("active-tab");
             approvedTab.classList.remove("active-tab");
+
+            qrContainer.classList.remove('hidden');
+
+            localStorage.setItem('activeTab', 'checkedIn')
         }
 
         approvedTab.addEventListener("click", showApprovedTable);
         checkedInTab.addEventListener("click", showCheckedInTable);
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            switch (localStorage.getItem('activeTab')) {
+                case 'checkedIn':
+                    showCheckedInTable();
+                    break;
+
+                default:
+                    showApprovedTable();
+                    break;
+            }
+
+        })
     </script>
 
     <!-- Reject -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"> </script>
     <script>
-        const reject = document.getElementById('reject');
+        const reject = document.getElementById('regReject');
         const rejectForm = document.getElementById('rejectForm');
 
         const modal = document.getElementById('rejectModal');
