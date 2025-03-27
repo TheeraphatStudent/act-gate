@@ -5,6 +5,7 @@ namespace FinalProject\View;
 require_once('components/search.php');
 require_once('components/calendar/calendar.php');
 require_once('components/texteditor/texteditor.php');
+
 require_once('utils/useTags.php');
 require_once('utils/useDateTime.php');
 
@@ -37,7 +38,7 @@ $calendar = new SchedulerCalendar();
     <!-- Cover Image Container -->
     <div class="relative lg:pt-[12rem] lg:pb-[8rem] py-[8rem]">
         <div
-            class="flex flex-col justify-end items-center w-[clamp(350px,85vw,1650px)] min-w-[400px] h-[clamp(300px,40vw,700px)] rounded-3xl bg-[url(/public/images/banner.jpg)] bg-center bg-cover overflow-hidden">
+            class="flex flex-col justify-end items-center w-[clamp(350px,85vw,1650px)] min-w-[400px] h-[clamp(300px,40vw,700px)] rounded-3xl bg-[url(/public/images/banner.jpg)] bg-center bg-cover overflow-hidden bg-dark-primary">
 
             <!-- Text -->
             <div
@@ -146,13 +147,6 @@ $calendar = new SchedulerCalendar();
 
                         <div class="flex flex-row justify-center items-center gap-2.5 w-full h-10">
                             <?php
-                            $statusMappings = [
-                                1 => ['class' => 'btn-warring', 'label' => 'รออนุมัติ'],
-                                2 => ['class' => 'btn-secondary', 'label' => 'อนุมัติแล้ว'],
-                                3 => ['class' => 'btn-gray', 'label' => 'เคยเข้าร่วมแล้ว'],
-                                4 => ['class' => 'btn-danger', 'label' => 'ถูกปฏิเสธ'],
-                            ];
-
                             if (isset($item['haveBeenJoined']) && array_key_exists($item['haveBeenJoined'], $statusMappings)) {
                                 $buttonClass = $statusMappings[$item['haveBeenJoined']]['class'];
                                 $buttonLabel = $statusMappings[$item['haveBeenJoined']]['label'];
@@ -160,10 +154,12 @@ $calendar = new SchedulerCalendar();
                                 $buttonClass = 'btn-primary';
                                 $buttonLabel = 'ดูกิจกรรม';
                             }
+
+                            // print_r($item['haveBeenJoined']);
                             ?>
 
                             <a href="../?action=event.attendee&id=<?= htmlspecialchars($item['eventId']) ?>&joined=<?= htmlspecialchars($item['joined']) ?>" class="<?= htmlspecialchars($buttonClass) ?> max-h-10 w-full max-w-[80%]">
-                                <span class="font-kanit text-base text-white">
+                                <span class="font-kanit text-base">
                                     <?= htmlspecialchars($buttonLabel) ?>
                                 </span>
                             </a>
@@ -181,7 +177,7 @@ $calendar = new SchedulerCalendar();
                     $textArray = preg_split('//u', $text, -1, PREG_SPLIT_NO_EMPTY);
 
                     foreach ($textArray as $key => $value) {
-                        echo "<span class='text-6xl'> $value </span>";
+                        echo "<span class='text-6xl' style='--i:" . ($key + 1) . "'>$value</span>";
                     }
                     ?>
                 </div>
@@ -402,7 +398,7 @@ $calendar = new SchedulerCalendar();
     <span class="absolute bottom-4 left-4 text-primary shadow-sm">&copy; <?= date('Y') ?> | Act Gate All Rights Reserved</span>
 
     <!-- <footer class="w-full h-[500px] bg-white">
-    </footer> -->
+    </footer> -->'
 </body>
 
 </html>

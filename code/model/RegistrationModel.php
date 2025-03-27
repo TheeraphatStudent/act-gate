@@ -11,7 +11,6 @@ use DateTime;
 use PDO;
 use PDOException;
 
-
 class Registration
 {
 
@@ -72,9 +71,14 @@ class Registration
     {
         try {
             $stmt = $this->connection->prepare("
-            SELECT * FROM Registration 
-            WHERE userId = :userId AND eventId = :eventId
+            SELECT *
+            FROM Registration r
+            WHERE r.eventId = :eventId
+            AND r.userId = :userId
         ");
+
+            $userId = trim($userId);
+            $eventId = trim($eventId);
 
             $stmt->bindParam(':userId', $userId);
             $stmt->bindParam(':eventId', $eventId);
@@ -84,7 +88,7 @@ class Registration
 
             return [
                 "status" => $result ? 200 : 404,
-                "data" => $result ?: []
+                "data" => $result ? $result : []
             ];
         } catch (PDOException $e) {
             return [

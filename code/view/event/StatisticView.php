@@ -6,7 +6,7 @@ require_once('utils/useDateTime.php');
 use FinalProject\Components\Breadcrumb;
 use FinalProject\Components\Tags;
 
-function fetchEventStatistics($eventId)
+function mockData($eventId)
 {
     return [
         'totalParticipants' => 250,
@@ -30,7 +30,7 @@ function fetchEventStatistics($eventId)
 }
 
 $eventId = $_GET['id'] ?? null;
-$statistics = fetchEventStatistics($eventId);
+$statistics = mockData($eventId);
 
 $navigate = new Breadcrumb();
 $navigate->setPath(
@@ -44,7 +44,7 @@ $navigate->setPath(
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Statistics Dashboard</title>
+    <title>Event Statistics</title>
 
     <link rel="stylesheet" href="public/style/main.css">
 </head>
@@ -52,6 +52,16 @@ $navigate->setPath(
 <body class="flex flex-col justify-start items-center bg-primary">
     <div class="flex flex-col w-full gap-14 max-w-content py-[200px] px-10 xl:px-0">
         <?php $navigate->render(); ?>
+
+        <?php
+        // print_r($statistics['joinedDates']);
+        // echo '<br>';
+        // echo '<br>';
+        // print_r($joinedStatistics);
+
+        
+
+        ?>
 
         <div class="flex flex-col gap-5 w-full max-w-[1200px] mx-auto">
             <div class="w-full bg-white shadow-md rounded-lg p-6 min-h-fit flex flex-col">
@@ -61,7 +71,7 @@ $navigate->setPath(
                 </div>
             </div>
 
-            <div class="flex flex-col md:flex-row gap-5">
+            <!-- <div class="flex flex-col md:flex-row gap-5">
                 <div class="w-full bg-white shadow-md rounded-lg p-6 min-h-fit flex flex-col">
                     <h2 class="text-xl font-semibold text-black mb-4">คำขอเข้าร่วม</h2>
                     <div class="flex">
@@ -75,7 +85,7 @@ $navigate->setPath(
                         <canvas id="attendanceStatusChart" class="w-full h-1/2"></canvas>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
 
 
@@ -85,7 +95,7 @@ $navigate->setPath(
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.1.0/dist/chartjs-plugin-datalabels.min.js"></script>
 
     <script>
-        const joined = <?= json_encode($statistics['joinedDates']) ?>;
+        const joined = <?= json_encode($joinedStatistics) ?>;
         const regStatus = <?= json_encode($statistics['regStatus']) ?>;
         const attStatus = <?= json_encode($statistics['attStatus']) ?>;
 
@@ -206,8 +216,7 @@ $navigate->setPath(
                     fill: true,
                     backgroundColor: '#ABCDF755',
                 }]
-            }, {},
-            {
+            }, {}, {
                 x: 'ช่วงวันที่จัดงาน',
                 y: 'จำนวนผู้เข้าร่วม'
             });

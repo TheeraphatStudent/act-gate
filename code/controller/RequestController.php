@@ -71,8 +71,9 @@ class RequestController
 
                 if ($result != null) {
                     $_SESSION['user'] = [
-                        "userId" => $result,
-                        "username" => $username
+                        "userId" => $result['userId'],
+                        "username" => $username,
+                        "name" => $result['name']
                     ];
 
                     return response(status: 200, message: "เข้าสู่ระบบสำเร็จ!", redirect: '/', type: 'json');
