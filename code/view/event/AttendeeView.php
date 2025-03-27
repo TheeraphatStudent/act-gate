@@ -375,9 +375,9 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                 const ticketCode = document.getElementById('ticket-code');
 
                 const ticketData = JSON.stringify({
-                    userId: '<?= $_SESSION['user']['userId'] ?>',
-                    regId: '<?= $regObj['regId'] ?>',
-                    eventId: '<?= $eventObj['eventId'] ?>'
+                    userId: '<?= $_SESSION['user']['userId'] ?? null ?>',
+                    regId: '<?= $regObj['regId'] ?? null ?>',
+                    eventId: '<?= $eventObj['eventId'] ?? null ?>'
                 });
 
                 <?php  unset($regObj); ?>
