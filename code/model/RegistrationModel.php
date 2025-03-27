@@ -72,8 +72,10 @@ class Registration
     {
         try {
             $stmt = $this->connection->prepare("
-            SELECT * FROM Registration r
-            WHERE r.userId = :userId AND r.eventId = :eventId
+            SELECT *
+            FROM Registration r
+            WHERE r.eventId = :eventId
+            AND r.userId = :userId
         ");
 
             $userId = trim($userId);
@@ -87,7 +89,7 @@ class Registration
 
             return [
                 "status" => $result ? 200 : 404,
-                "data" => $result ?: []
+                "data" => $result ? $result : []
             ];
         } catch (PDOException $e) {
             return [

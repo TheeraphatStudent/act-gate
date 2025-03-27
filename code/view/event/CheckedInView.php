@@ -69,13 +69,21 @@ $qrreader = new QrCodeReader();
                                     <td class="py-3 px-4 text-sm font-medium max-w-[150px]"><?= $item['name'] ?? "-" ?></td>
                                     <td class="py-3 px-4 text-sm font-medium max-w-[150px]"><?= $item['gender'] ?? "-" ?></td>
                                     <td class="py-3 px-4 text-left"> <?= !empty($item['birth']) ? ageCalculator(birth: $item['birth']) : "-" ?> </td>
-                                    <td class="py-3 px-4 text-sm font-medium max-w-[150px]"><?= (new Tags($item['status']))->render() ?></td>
+                                    <td class="py-3 px-4 text-sm font-medium max-w-[150px]">
+                                        <?php
+                                        if ($item['status'] == 'accepted' && $item['attStatus'] == 'accepted') {
+                                            (new Tags('attended'))->render();
+                                        } else {
+                                            (new Tags($item['status']))->render();
+                                        }
+                                        ?>
+                                    </td>
                                     <td>
                                         <div class="flex justify-center items-center space-x-2 *:mb-0">
-                                            <button type="button" class="p-1.5 rounded-full text-red hover:bg-light-red <?= $item['status'] == "reject" ? 'hidden' : '' ?>" id="reject">
+                                            <button type="button" class="p-1.5 rounded-full text-red hover:bg-light-red <?= ($item['status'] == "reject") || ($item['status'] == 'accepted' && $item['attStatus'] == 'accepted') ? 'hidden' : '' ?>" id="reject">
                                                 <img class="w-4 h-4" src="public/icons/reject.png" alt="reject">
                                             </button>
-                                            <form action="..?action=request&on=reg&form=accept" class="<?= $item['status'] == "accepted" ? 'hidden' : '' ?>" method="post">
+                                            <form action="..?action=request&on=reg&form=accept" class="<?= ($item['status'] == "accepted") ? 'hidden' : '' ?>" method="post">
                                                 <input type="hidden" name="userId" value="<?= $item['userId'] ?>">
                                                 <input type="hidden" name="regId" value="<?= $item['regId'] ?>">
                                                 <input type="hidden" name="eventId" value="<?= $_GET['id'] ?>">

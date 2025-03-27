@@ -212,10 +212,11 @@ class Event
                 u.name AS organizeName,
                 COUNT(CASE WHEN a.status = 'pending' THEN a.regId END) AS joined,
                 CASE 
-                    WHEN EXISTS (SELECT 1 FROM Registration r2 WHERE r2.eventId = e.eventId AND r2.userId = :userId AND r2.status = 'pending') THEN 1 -- รออนุมัติ
-                    WHEN EXISTS (SELECT 1 FROM Registration r2 WHERE r2.eventId = e.eventId AND r2.userId = :userId AND r2.status = 'accepted') THEN 2 -- อนุมัติแล้ว
-                    WHEN EXISTS (SELECT 1 FROM Attendance a2 JOIN Registration r3 ON a2.regId = r3.regId WHERE r3.eventId = e.eventId AND r3.userId = :userId AND a2.status = 'accepted') THEN 3 -- เคยเข้าร่วมแล้ว
+                    WHEN EXISTS (SELECT 1 FROM Registration r2 LEFT JOIN Attendance a2 ON r2.regId = a2.regId WHERE r2.eventId = e.eventId AND r2.userId = :userId AND (a2.status = 'accepted' OR r2.status = 'accepted')) THEN 5 -- เข้าร่วมแล้ว
                     WHEN EXISTS (SELECT 1 FROM Registration r2 LEFT JOIN Attendance a2 ON r2.regId = a2.regId WHERE r2.eventId = e.eventId AND r2.userId = :userId AND (a2.status = 'reject' OR r2.status = 'reject')) THEN 4 -- ถูกปฏิเสธ
+                    WHEN EXISTS (SELECT 1 FROM Attendance a2 JOIN Registration r3 ON a2.regId = r3.regId WHERE r3.eventId = e.eventId AND r3.userId = :userId AND a2.status = 'accepted') THEN 3 -- เคยเข้าร่วมแล้ว
+                    WHEN EXISTS (SELECT 1 FROM Registration r2 WHERE r2.eventId = e.eventId AND r2.userId = :userId AND r2.status = 'accepted') THEN 2 -- อนุมัติแล้ว
+                    WHEN EXISTS (SELECT 1 FROM Registration r2 WHERE r2.eventId = e.eventId AND r2.userId = :userId AND r2.status = 'pending') THEN 1 -- รออนุมัติ
                     ELSE 0
                 END AS haveBeenJoined
             FROM Event e
@@ -450,20 +451,33 @@ class Event
             $_SESSION['selected_type'] = $eventType;
 
             $base = "
-            SELECT
-                e.eventId,
-                e.cover,
-                e.title,
-                e.maximum,
-                e.type,
-                e.start,
-                e.end,
-                e.venue,
-                e.organizeId,
-                e.location,
-                u.name AS organizeName,
-                COUNT(DISTINCT r.regId) AS joined
-        ";
+                SELECT
+                    e.eventId,
+                    e.cover,
+                    e.title,
+                    e.maximum,
+                    e.type,
+                    e.start,
+                    e.end,
+                    e.venue,
+                    e.organizeId,
+                    e.location,
+                    u.name AS organizeName,
+                    COUNT(DISTINCT r.regId) AS joined
+            ";
+
+            $queryCondition = isset($_SESSION['user']['userId']);
+
+            if ($queryCondition) {
+                $base .= "CASE 
+                WHEN EXISTS (SELECT 1 FROM Registration r2 LEFT JOIN Attendance a2 ON r2.regId = a2.regId WHERE r2.eventId = e.eventId AND r2.userId = :userId AND (a2.status = 'accepted' OR r2.status = 'accepted')) THEN 5 -- เข้าร่วมแล้ว
+                WHEN EXISTS (SELECT 1 FROM Registration r2 LEFT JOIN Attendance a2 ON r2.regId = a2.regId WHERE r2.eventId = e.eventId AND r2.userId = :userId AND (a2.status = 'reject' OR r2.status = 'reject')) THEN 4 -- ถูกปฏิเสธ
+                WHEN EXISTS (SELECT 1 FROM Attendance a2 JOIN Registration r3 ON a2.regId = r3.regId WHERE r3.eventId = e.eventId AND r3.userId = :userId AND a2.status = 'accepted') THEN 3 -- เคยเข้าร่วมแล้ว
+                WHEN EXISTS (SELECT 1 FROM Registration r2 WHERE r2.eventId = e.eventId AND r2.userId = :userId AND r2.status = 'accepted') THEN 2 -- อนุมัติแล้ว
+                    WHEN EXISTS (SELECT 1 FROM Registration r2 WHERE r2.eventId = e.eventId AND r2.userId = :userId AND r2.status = 'pending') THEN 1 -- รออนุมัติ
+                    ELSE 0
+                END AS haveBeenJoined";
+            }
 
             $params = [];
             $conditions = [];

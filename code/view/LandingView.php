@@ -5,6 +5,7 @@ namespace FinalProject\View;
 require_once('components/search.php');
 require_once('components/calendar/calendar.php');
 require_once('components/texteditor/texteditor.php');
+
 require_once('utils/useTags.php');
 require_once('utils/useDateTime.php');
 
@@ -146,13 +147,6 @@ $calendar = new SchedulerCalendar();
 
                         <div class="flex flex-row justify-center items-center gap-2.5 w-full h-10">
                             <?php
-                            $statusMappings = [
-                                1 => ['class' => 'btn-warring', 'label' => 'รออนุมัติ'],
-                                2 => ['class' => 'btn-secondary', 'label' => 'อนุมัติแล้ว'],
-                                3 => ['class' => 'btn-gray', 'label' => 'เคยเข้าร่วมแล้ว'],
-                                4 => ['class' => 'btn-danger', 'label' => 'ถูกปฏิเสธ'],
-                            ];
-
                             if (isset($item['haveBeenJoined']) && array_key_exists($item['haveBeenJoined'], $statusMappings)) {
                                 $buttonClass = $statusMappings[$item['haveBeenJoined']]['class'];
                                 $buttonLabel = $statusMappings[$item['haveBeenJoined']]['label'];
@@ -160,10 +154,12 @@ $calendar = new SchedulerCalendar();
                                 $buttonClass = 'btn-primary';
                                 $buttonLabel = 'ดูกิจกรรม';
                             }
+
+                            // print_r($item['haveBeenJoined']);
                             ?>
 
                             <a href="../?action=event.attendee&id=<?= htmlspecialchars($item['eventId']) ?>&joined=<?= htmlspecialchars($item['joined']) ?>" class="<?= htmlspecialchars($buttonClass) ?> max-h-10 w-full max-w-[80%]">
-                                <span class="font-kanit text-base text-white">
+                                <span class="font-kanit text-base">
                                     <?= htmlspecialchars($buttonLabel) ?>
                                 </span>
                             </a>

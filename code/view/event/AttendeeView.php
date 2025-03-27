@@ -4,6 +4,7 @@ namespace FinalProject\View\Event;
 
 require_once('utils/useRegister.php');
 require_once('utils/useDateTime.php');
+require_once('utils/useTags.php');
 
 require_once('components/texteditor/texteditor.php');
 
@@ -96,24 +97,6 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                                     <input type="hidden" name="userId" value="<?= htmlspecialchars($_SESSION['user']['userId']) ?>">
 
                                     <?php
-                                    $buttons = [
-                                        'accepted' => [
-                                            ['class' => 'btn-primary w-full', 'label' => 'แสดงบัตร', 'id' => 'acceptEvent'],
-                                            // ['class' => 'btn-primary-outline w-full', 'label' => 'ดาวน์โหลดบัตร', 'id' => 'downloadTicket']
-                                        ],
-                                        'pending' => [
-                                            ['class' => 'btn-warring w-full', 'label' => 'รออนุมัติ', 'id' => 'pendingEvent']
-                                        ],
-                                        'reject' => [
-                                            ['class' => 'btn-danger w-full', 'label' => 'ดูเหตุผล', 'id' => 'rejectEvent']
-                                        ],
-                                        'default' => [
-                                            ['class' => 'btn-primary w-full', 'label' => 'เข้าร่วม', 'id' => 'registerEvent']
-                                        ],
-                                        'full' => [
-                                            ['class' => 'btn-gray w-full', 'label' => 'เต็ม', 'id' => '']
-                                        ]
-                                    ];
 
                                     $status = (isset($regObj['status']) ? trim($regObj['status']) : null) ?? 'default';
                                     $status = in_array($status, Register::REGISTER_STATUS) ? $status : 'default';
@@ -124,21 +107,22 @@ $location->updatetextarea(description: $eventObj['location'], isEdit: false);
                                     // echo '<br>';
                                     // print_r($regObj);
 
-                                    if (new DateTime() < new DateTime($eventObj['start'])) {
-                                    ?>
-                                        <button type='button' class='btn-gray' id=''><span>ยังไม่ถึงเวลาเข้าร่วม</span></button>
-                                    <?php
-                                    } elseif (new DateTime() > new DateTime($eventObj['end'])) {
+                                    if (new DateTime() > new DateTime($eventObj['end'])) {
                                     ?>
                                         <button type='button' class='btn-gray' id=''><span>หมดเวลาเข้าร่วม</span></button>
                                     <?php
                                     } else {
                                         if (!isset($regObj['status']) && $_GET['joined'] >= $eventObj['maximum']) {
-                                            foreach ($buttons['full'] as $button) {
+                                            foreach ($attButtons['full'] as $button) {
                                                 echo "<button type='button' class='{$button['class']}' id='{$button['id']}'><span>{$button['label']}</span></button>";
                                             }
-                                        } else {
-                                            foreach ($buttons[$status] as $button) {
+                                        } elseif ((isset($_SESSION['user']['userId']) && $eventObj['organizeId'] === $_SESSION['user']['userId'])) {
+                                            foreach ($attButtons['owned'] as $button) {
+                                                echo "<button type='button' class='{$button['class']}' id='{$button['id']}'><span>{$button['label']}</span></button>";
+                                            }
+                                        } 
+                                        else {
+                                            foreach ($attButtons[$status] as $button) {
                                                 echo "<button type='button' class='{$button['class']}' id='{$button['id']}'><span>{$button['label']}</span></button>";
                                             }
                                         }
