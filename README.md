@@ -104,3 +104,46 @@ docker run --net=host -it -e NGROK_AUTHTOKEN=2rOqB5GAbOGqPqCf245sIl96WJp_3wQSDz2
 `
 https://www.svgrepo.com/svg/126764/pie-chart?edit=true
 `
+
+---
+
+# Js word
+
+### fetch
+
+1. ใช้ fetch ดึงข้อมูล (GET Request)
+```
+fetch('https://api.example.com/data')
+  .then(response => response.json()) // แปลงข้อมูลเป็น JSON
+  .then(data => console.log(data)) // แสดงข้อมูลใน console
+  .catch(error => console.error('Error:', error)); // จับ error
+```
+
+2. ใช้ fetch ส่งข้อมูล (POST Request)
+```
+fetch('https://api.example.com/data', {
+  method: 'POST', // ใช้ HTTP method POST
+  headers: {
+    'Content-Type': 'application/json' // กำหนดประเภทข้อมูลที่ส่ง
+  },
+  body: JSON.stringify({ name: 'John', age: 30 }) // แปลง object เป็น JSON
+})
+  .then(response => response.json())
+  .then(data => console.log('Success:', data))
+  .catch(error => console.error('Error:', error));
+```
+
+3. ใช้ fetch ในรูปแบบ async/await
+```
+async function fetchData() {
+  try {
+    const response = await fetch('https://api.example.com/data');
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+fetchData();
+```
