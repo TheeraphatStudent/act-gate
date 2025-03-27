@@ -97,67 +97,57 @@ $navigate = new Breadcrumb();
                                 </div>
 
                                 <div class="flex flex-row justify-start items-center gap-2.5 w-full">
-                                    <!-- <div class="flex justify-center items-center p-2 rounded-lg bg-light-red">
+                                    <!-- <button type="button" class="flex justify-center items-center gap-1 p-2 rounded-lg bg-light-red hover:bg-red/50">
                                         <img
                                             src="public/icons/delete.svg"
                                             alt="Cancel"
                                             class="w-5 h-5" />
-                                    </div> -->
+                                        <span class="text-red">ยกเลิกการเข้าร่วม</span>
+                                    </button> -->
 
-                                    <?php if ($about['reg_status'] === 'pending'): ?>
-                                        <div class="flex justify-between items-center px-4 py-2 rounded-lg bg-yellow hover:cursor-pointer hover:bg-dark-yellow flex-grow">
+                                    <?php
+                                    $statuses = [
+                                        'pending' => [
+                                            'bg' => 'bg-yellow hover:bg-dark-yellow',
+                                            'text' => 'รออนุมัติ',
+                                            'icon' => null
+                                        ],
+                                        'accepted_pending' => [
+                                            'bg' => 'bg-primary hover:bg-dark-primary/50',
+                                            'text' => 'ดูกิจกรรม/บัตร',
+                                            'icon' => 'public/icons/ticket.svg'
+                                        ],
+                                        'accepted_accepted' => [
+                                            'bg' => 'bg-gray-400 hover:bg-gray-800',
+                                            'text' => 'เข้าร่วมแล้ว',
+                                            'icon' => null
+                                        ]
+                                    ];
+
+                                    $key = match (true) {
+                                        $about['reg_status'] === 'pending' => 'pending',
+                                        $about['reg_status'] === 'accepted' && $about['att_status'] === 'pending' => 'accepted_pending',
+                                        $about['reg_status'] === 'accepted' && $about['att_status'] === 'accepted' => 'accepted_accepted',
+                                        default => null
+                                    };
+
+                                    if ($key): ?>
+                                        <a href="../?action=event.attendee&id=<?= $about['eventId'] ?>"
+                                            class="flex justify-between items-center px-4 py-2 rounded-lg <?= $statuses[$key]['bg'] ?> hover:cursor-pointer flex-grow">
                                             <div class="flex items-center gap-2">
-                                                <!-- <img
-                                                    class="w-6 h-6"
-                                                    src="public/icons/ticket.svg"
-                                                    alt="Ticket" /> -->
-                                                <span class="text-sm text-white font-medium" lang="th">รออนุมัติ</span>
+                                                <?php if ($statuses[$key]['icon']): ?>
+                                                    <img class="w-6 h-6" src="<?= $statuses[$key]['icon'] ?>" alt="Icon" />
+                                                <?php endif; ?>
+                                                <span class="text-sm text-white font-medium" lang="th"><?= $statuses[$key]['text'] ?></span>
                                             </div>
-                                            <div class="flex justify-center items-center w-6 h-6">
-                                                <img
-                                                    class="w-3 h-3"
-                                                    src="public/icons/arrow-right.svg"
-                                                    alt="Arrow" />
-                                            </div>
-                                        </div>
-                                    <?php endif ?>
+                                            <?php if ($key !== 'accepted_accepted'): ?>
+                                                <div class="flex justify-center items-center w-6 h-6">
+                                                    <img class="w-3 h-3" src="public/icons/arrow-right.svg" alt="Arrow" />
+                                                </div>
+                                            <?php endif; ?>
+                                        </a>
+                                    <?php endif; ?>
 
-                                    <?php if ($about['reg_status'] === 'accepted' && $about['att_status'] === 'pending'): ?>
-                                        <div class="flex justify-between items-center px-4 py-2 rounded-lg bg-primary hover:cursor-pointer hover:bg-dark-primary flex-grow">
-                                            <div class="flex items-center gap-2">
-                                                <img
-                                                    class="w-6 h-6"
-                                                    src="public/icons/ticket.svg"
-                                                    alt="Ticket" />
-
-                                                <span class="text-sm text-white font-medium">X12xa9RT&u=1</span>
-                                            </div>
-                                            <div class="flex justify-center items-center w-6 h-6">
-                                                <img
-                                                    class="w-3 h-3"
-                                                    src="public/icons/arrow-right.svg"
-                                                    alt="Arrow" />
-                                            </div>
-                                        </div>
-                                    <?php endif ?>
-
-                                    <?php if ($about['reg_status'] === 'accepted' && $about['att_status'] === 'accepted'): ?>
-                                        <div class="flex justify-between items-center px-4 py-2 rounded-lg bg-gray-400 hover:cursor-pointer hover:bg-gray-800 flex-grow">
-                                            <div class="flex items-center gap-2">
-                                                <!-- <img
-                                                    class="w-6 h-6"
-                                                    src="public/icons/ticket.svg"
-                                                    alt="Ticket" /> -->
-                                                <span class="text-sm text-white font-medium" lang="th">เข้าร่วมแล้ว</span>
-                                            </div>
-                                            <!-- <div class="flex justify-center items-center w-6 h-6">
-                                                <img
-                                                    class="w-3 h-3"
-                                                    src="public/icons/arrow-right.svg"
-                                                    alt="Arrow" />
-                                            </div> -->
-                                        </div>
-                                    <?php endif ?>
                                 </div>
                             </div>
                         </div>

@@ -654,7 +654,61 @@ class Event
     //     }
     // }
 
-    public function getRegistrationEventByUserId() {}
+    public function getJoinedDateById($eventId)
+    {
+        try {
+            $stmt = $this->connection->prepare("
+                WITH RECURSIVE DateRange AS (
+                    SELECT 
+                        DATE(e.start) AS eventDate, 
+                        e.eventId
+                    FROM Event e
+                    WHERE e.eventId = :eventId
+                    UNION ALL
+                    SELECT DATE_ADD(eventDate, INTERVAL 1 DAY), eventId
+                    FROM DateRange
+                    WHERE eventDate < (SELECT DATE(MAX(e.end)) FROM Event e WHERE e.eventId = DateRange.eventId)
+                )
+                SELECT 
+                    d.eventDate AS joinedDate,
+                    COALESCE(MAX(a.created)) AS refDate,
+                    COUNT(a.regId) AS totalJoined
+                FROM DateRange d
+                LEFT JOIN Event e ON d.eventId = e.eventId
+                LEFT JOIN Registration r ON r.eventId = e.eventId
+                LEFT JOIN Attendance a ON a.regId = r.regId AND DATE(a.created) = DATE(d.eventDate)
+                GROUP BY 
+                    d.eventId, 
+                    d.eventDate
+                ORDER BY d.eventId, d.eventDate;
+            ");
+
+            $stmt->bindParam(':eventId', $eventId);
+            $stmt->execute();
+
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return [
+                "status" => 200,
+                "message" => "Success",
+                "data" => $result
+            ];
+        } catch (PDOException $e) {
+            return [
+                "status" => 500,
+                "message" => "Database error: " . $e->getMessage(),
+                "data" => []
+            ];
+        }
+    }
+
+    public function getRegStatisticsById() {
+        
+    }
+
+    public function getAttStatisticsById() {
+        
+    }
 
     public function deleteEventById($userId, $eventId)
     {

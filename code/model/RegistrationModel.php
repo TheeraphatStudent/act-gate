@@ -11,7 +11,6 @@ use DateTime;
 use PDO;
 use PDOException;
 
-
 class Registration
 {
 

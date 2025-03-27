@@ -146,7 +146,7 @@ class CameraInit {
 
                 this.scanner.start()
                     .then(() => {
-                        console.log("Camera started successfully.");
+                        console.log("Camera started!");
                         this.cameraBg.classList.replace("bg-black/20", "bg-red/20");
                         this.updateSuggested("วาง QR Code ไว่ในกรอบ", "bg-black/40");
                     })
@@ -155,11 +155,9 @@ class CameraInit {
                         this.handleCameraError();
                     });
             } else {
-                console.error("Video element (#qr-video) not found!");
                 this.handleCameraError();
             }
         } else {
-            console.error("No camera available or QrScanner not loaded.");
             this.handleCameraError();
         }
     }

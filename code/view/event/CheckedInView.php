@@ -80,7 +80,7 @@ $qrreader = new QrCodeReader();
                                     </td>
                                     <td>
                                         <div class="flex justify-center items-center space-x-2 *:mb-0">
-                                            <button type="button" class="p-1.5 rounded-full text-red hover:bg-light-red <?= ($item['status'] == "reject") || ($item['status'] == 'accepted' && $item['attStatus'] == 'accepted') ? 'hidden' : '' ?>" id="reject">
+                                            <button type="button" class="p-1.5 rounded-full text-red hover:bg-light-red <?= ($item['status'] == "reject") || ($item['status'] == 'accepted' && $item['attStatus'] == 'accepted') ? 'hidden' : '' ?>" id="regReject">
                                                 <img class="w-4 h-4" src="public/icons/reject.png" alt="reject">
                                             </button>
                                             <form action="..?action=request&on=reg&form=accept" class="<?= ($item['status'] == "accepted") ? 'hidden' : '' ?>" method="post">
@@ -179,7 +179,7 @@ $qrreader = new QrCodeReader();
                                                 <input type="hidden" name="regId" value="<?= $item['regId'] ?>">
                                                 <input type="hidden" name="eventId" value="<?= $item['eventId'] ?>">
 
-                                                <button type="button" class="p-1.5 rounded-full text-red hover:bg-light-red <?= ($item['status'] == "pending") ? '' : 'hidden' ?>" id="reject">
+                                                <button type="button" class="p-1.5 rounded-full text-red hover:bg-light-red <?= ($item['status'] == "pending") ? '' : 'hidden' ?>" id="attReject">
                                                     <img class="w-4 h-4" src="public/icons/reject.png" alt="reject">
                                                 </button>
                                             </form>
@@ -215,6 +215,8 @@ $qrreader = new QrCodeReader();
             </div>
         </div>
     </div>
+
+    
 
     <!-- Table Management -->
     <script>
@@ -271,7 +273,7 @@ $qrreader = new QrCodeReader();
     <!-- Reject -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"> </script>
     <script>
-        const reject = document.getElementById('reject');
+        const reject = document.getElementById('regReject');
         const rejectForm = document.getElementById('rejectForm');
 
         const modal = document.getElementById('rejectModal');

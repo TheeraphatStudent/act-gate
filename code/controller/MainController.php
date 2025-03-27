@@ -134,7 +134,9 @@ class MainController
                     break;
 
                 case 'statistic':
-                    // $allUserReg = $regModel->getUserRegisterByEventAndUserId(userId: $userId, eventId: $eventId);
+                    $joinedDateContainer = ($eventModel->getJoinedDateById(eventId: $eventId))['data'];
+
+                    $joinedStatistics = array_combine(array_column($joinedDateContainer, 'joinedDate'),  array_column($joinedDateContainer, 'totalJoined'));
 
                     // require_once("./view/event/statistic.php");
                     require_once("./view/event/StatisticView.php");
