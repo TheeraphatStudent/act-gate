@@ -704,6 +704,7 @@ class Event
 
     public function getRegStatisticsById() {
         
+
     }
 
     public function getAttStatisticsById() {

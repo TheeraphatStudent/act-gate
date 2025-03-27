@@ -71,7 +71,7 @@ $navigate->setPath(
                 </div>
             </div>
 
-            <div class="flex flex-col md:flex-row gap-5">
+            <!-- <div class="flex flex-col md:flex-row gap-5">
                 <div class="w-full bg-white shadow-md rounded-lg p-6 min-h-fit flex flex-col">
                     <h2 class="text-xl font-semibold text-black mb-4">คำขอเข้าร่วม</h2>
                     <div class="flex">
@@ -85,7 +85,7 @@ $navigate->setPath(
                         <canvas id="attendanceStatusChart" class="w-full h-1/2"></canvas>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
 
 
