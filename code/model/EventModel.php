@@ -703,7 +703,16 @@ class Event
     }
 
     public function getRegStatisticsById() {
-        
+//         "SELECT 
+//     e.eventId,
+//     COUNT(CASE WHEN r.status = 'pending' THEN r.regId END) AS totalRegPending,
+//     COUNT(CASE WHEN r.status = 'accepted' THEN r.regId END) AS totalRegAccept,
+//     COUNT(CASE WHEN r.status = 'reject' THEN r.regId END) AS totalRegReject
+// FROM Event e
+// LEFT JOIN Registration r ON r.eventId = e.eventId
+// WHERE e.eventId = ''
+// GROUP BY e.eventId;
+// "
 
     }
 
